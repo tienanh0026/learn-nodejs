@@ -1,4 +1,4 @@
-import userRoute from './routes/users.route'
+import userRoute from './routes/user/users.route'
 import database from './services/database/database'
 import express from 'express'
 const port = 3002

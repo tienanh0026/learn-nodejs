@@ -17,6 +17,6 @@ const database = new Sequelize({
 })
 
 //only run when create table
-// database.sync()
+database.sync()
 
 export default database
