@@ -1,8 +1,7 @@
-import { UserCreateParams } from '@/domain/entity/user.entity'
-import { User } from '@/models/user/user.model'
+import { UserCreateParams, UserEntityDefault } from '@/domain/entity/user.entity'
 
 export interface UserRepository {
-  create(user: UserCreateParams): Promise<User>
-  findAll(): Promise<User[]>
-  findByEmail(email: string): Promise<User | null>
+  create(user: UserCreateParams): Promise<UserEntityDefault>
+  findAll(): Promise<UserEntityDefault[]>
+  findByEmail(email: string): Promise<UserEntityDefault | null>
 }

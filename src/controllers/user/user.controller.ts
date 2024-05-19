@@ -2,21 +2,24 @@ import { User } from '@/models/user/user.model'
 import { RequestListener } from 'http'
 import { ResponseBody } from '../types'
 import { RequestHandler } from 'express'
-import { UserRes } from '@/modules/dto/user.response'
 import { UserService } from '@/services/user/user.service'
-import { BaseError, HttpException } from '@/models/error/error.model'
-import { FindByEmailReq } from '@/modules/dto/user.request'
+import { BaseError } from '@/models/error/error.model'
+import { FindByEmailReq, UserReq } from '@/modules/dto/user.request'
+import { UserRes } from '@/modules/dto/user.response'
 
 export class UserController {
   constructor(private _userService: UserService) {}
-  create: RequestHandler<unknown, unknown, UserRes> = async (req, res) => {
+  create: RequestHandler<unknown, ResponseBody<UserRes>, UserReq> = async (req, res) => {
     try {
       const newUser = req.body
       const user = await this._userService.create(newUser)
-      console.log(user)
+      const response: ResponseBody<UserRes> = {
+        message: 'success',
+        data: user
+      }
+      res.json(response)
     } catch (error) {
-      console.log((error as BaseError)?.httpCode)
-
+      console.log('Error type:', error)
       if (error instanceof BaseError) {
         console.log('Error type:', error)
         res.statusCode = error.httpCode
