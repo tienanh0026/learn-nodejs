@@ -1,5 +1,3 @@
-// import { AuthModel } from '@/models/auth/auth.model'
-// import { UserModel } from '@/models/user/user.model'
 import dotenv from 'dotenv'
 import { Sequelize } from 'sequelize-typescript'
 dotenv.config()
@@ -17,11 +15,5 @@ const database = new Sequelize({
   database: dbName,
   logging: true
 })
-
-// UserModel.hasMany(AuthModel, { foreignKey: 'userId', sourceKey: 'id' })
-// AuthModel.belongsTo(UserModel, { foreignKey: 'userId', targetKey: 'id' })
-
-//only run when create table
-database.sync()
 
 export default database

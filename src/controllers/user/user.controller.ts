@@ -1,11 +1,11 @@
-import { User } from '@/models/user/user.model'
 import { RequestListener } from 'http'
 import { ResponseBody } from '../types'
 import { RequestHandler } from 'express'
 import { UserService } from '@/services/user/user.service'
 import { BaseError } from '@/models/error/error.model'
-import { FindByEmailReq, UserReq } from '@/modules/dto/user.request'
-import { UserRes } from '@/modules/dto/user.response'
+import { FindByEmailReq, UserReq } from '@/modules/dto/user/user.request'
+import { UserRes } from '@/modules/dto/user/user.response'
+import { UserEntityDefault } from '@/domain/entity/user.entity'
 
 export class UserController {
   constructor(private _userService: UserService) {}
@@ -19,7 +19,6 @@ export class UserController {
       }
       res.json(response)
     } catch (error) {
-      console.log('Error type:', error)
       if (error instanceof BaseError) {
         console.log('Error type:', error)
         res.statusCode = error.httpCode
@@ -34,7 +33,7 @@ export class UserController {
   findAll: RequestHandler = async (req, res) => {
     try {
       const users = await this._userService.findAll()
-      const response: ResponseBody<User[]> = {
+      const response: ResponseBody<UserEntityDefault[]> = {
         message: 'success',
         data: users
       }
@@ -43,11 +42,11 @@ export class UserController {
       responseError(req, res)
     }
   }
-  findByEmail: RequestHandler<undefined, ResponseBody<User | null>, FindByEmailReq> = async (req, res) => {
+  findByEmail: RequestHandler<undefined, ResponseBody<UserEntityDefault | null>, FindByEmailReq> = async (req, res) => {
     try {
       const body = req.body
       const user = await this._userService.findByEmail(body.email)
-      const response: ResponseBody<User | null> = {
+      const response: ResponseBody<UserEntityDefault | null> = {
         message: 'success',
         data: user
       }

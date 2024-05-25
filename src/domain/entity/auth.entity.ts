@@ -6,4 +6,4 @@ export type AuthEntity = {
   deletedAt: string
 }
 
-export type AuthCreateParams = Omit<AuthEntity, 'createdAt' | 'deleteAt'>
+export type AuthCreateParams = Omit<AuthEntity, 'createdAt' | 'deletedAt'>

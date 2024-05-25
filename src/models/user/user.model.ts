@@ -3,7 +3,7 @@ import database from '@/services/database/database'
 import { DataType, Model } from 'sequelize-typescript'
 
 export class User extends Model<UserEntity, UserCreateParams> implements UserEntity {
-  public id!: number
+  public id!: string
   public name!: string
   public email!: string
   public createdAt!: string

@@ -1,12 +1,15 @@
 import userRoute from './routes/user/users.route'
 import database from './services/database/database'
 import express from 'express'
+import './services/database/associations'
+import authRoute from './routes/auth/auth.route'
+
 const port = 3002
 
 const app = express()
 app.use(express.json())
 app.use('/', userRoute)
-
+app.use('/auth', authRoute)
 database
   .authenticate()
   .then(async () => {
