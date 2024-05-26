@@ -22,9 +22,14 @@ export class AuthService {
       email: existedUser.email
     }
     const accessToken = jwtService_.generateToken(payload)
-    await authRepository_.create({ id: uid(), token: accessToken, userId: existedUser.id })
+    await authRepository_.saveToken({ id: uid(), token: accessToken, userId: existedUser.id })
     return {
       accessToken: accessToken
     }
+  }
+  async currentAuth(email: string) {
+    const extstedUser = await userRepository_.findByEmail(email)
+    if (!extstedUser) throw new BaseError('User not found', HttpStatusCode.NOT_FOUND)
+    return extstedUser
   }
 }

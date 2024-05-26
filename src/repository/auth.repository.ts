@@ -1,5 +1,6 @@
 import { AuthEntity, AuthCreateParams } from '@/domain/entity/auth.entity'
 
 export interface AuthRepository {
-  create(auth: AuthCreateParams): Promise<AuthEntity>
+  saveToken(auth: AuthCreateParams): Promise<AuthEntity>
+  getAuth(token: string): Promise<AuthEntity | null>
 }

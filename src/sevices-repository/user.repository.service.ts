@@ -19,4 +19,9 @@ export class UserRepositoryService implements UserRepository {
       where: { email: email }
     })
   }
+  async findOneById(id: string) {
+    return await UserModel.findOne({
+      where: { id: id }
+    })
+  }
 }

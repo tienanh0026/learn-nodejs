@@ -1,5 +1,9 @@
+import { UserEntityDefault } from '@/domain/entity/user.entity'
+
 type LoginResponse = {
   accessToken: string
 }
 
-export type { LoginResponse }
+type CurrentAuthResponse = UserEntityDefault
+
+export type { LoginResponse, CurrentAuthResponse }

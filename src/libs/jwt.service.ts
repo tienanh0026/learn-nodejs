@@ -12,4 +12,7 @@ export class JwtService {
   generateToken(payload: JwtPayload) {
     return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN })
   }
+  verifyAccessToken(token: string) {
+    return jwt.verify(token, JWT_SECRET) as JwtPayload
+  }
 }
