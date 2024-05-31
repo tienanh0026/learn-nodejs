@@ -1,4 +1,4 @@
-import { BaseError } from '@/models/error/error.model'
+import BaseError from '@/models/error/error.model'
 import { UserReq } from '@/modules/dto/user/user.request'
 import HttpStatusCode from 'http-status-codes'
 import bcrypt from 'bcrypt'
@@ -23,5 +23,10 @@ export class UserService {
   }
   async findByEmail(email: string): Promise<User | null> {
     return await userRepository_.findByEmail(email)
+  }
+  async findOneById(id: string) {
+    const user = await userRepository_.findOneById(id)
+    if (!user) throw new BaseError('Not found', HttpStatusCode.NOT_FOUND)
+    return user
   }
 }

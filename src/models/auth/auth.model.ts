@@ -16,12 +16,12 @@ export const AuthModel = database.define<Auth>('auth', {
     field: 'id',
     type: DataType.UUID,
     allowNull: false,
+    primaryKey: true,
     defaultValue: DataType.UUIDV4
   },
   userId: {
     field: 'user_id',
     type: DataType.UUID,
-    primaryKey: true,
     allowNull: false,
     defaultValue: DataType.UUIDV4
   },

@@ -5,10 +5,10 @@ import express from 'express'
 const userRoute = express()
 const UserService = new UserServiceClass()
 const UserController = new UserControllerClass(UserService)
-userRoute.get('/users', UserController.findAll)
-userRoute.post('/users', UserController.create)
-userRoute.get('/user/', UserController.findByEmail)
-
-// userRoute.post('/users', UserController.createUser)
+userRoute
+  .get('/users', UserController.findAll)
+  .post('/user/create', UserController.create)
+  .get('/user/', UserController.findByEmail)
+  .get('/user/:id', UserController.findById)
 
 export default userRoute

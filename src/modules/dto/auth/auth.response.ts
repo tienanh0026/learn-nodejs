@@ -6,4 +6,9 @@ type LoginResponse = {
 
 type CurrentAuthResponse = UserEntityDefault
 
-export type { LoginResponse, CurrentAuthResponse }
+type RegisterResponse = {
+  accessToken: string
+  user: UserEntityDefault
+}
+
+export type { LoginResponse, CurrentAuthResponse, RegisterResponse }

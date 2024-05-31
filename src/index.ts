@@ -3,6 +3,7 @@ import database from './services/database/database'
 import express from 'express'
 import './services/database/associations'
 import authRoute from './routes/auth/auth.route'
+import { errorHandler } from './common/error/error'
 
 const port = 3002
 
@@ -10,6 +11,11 @@ const app = express()
 app.use(express.json())
 app.use('/', userRoute)
 app.use('/auth', authRoute)
+app.use(() => {
+  console.log('ádasd')
+})
+app.use(errorHandler)
+
 database
   .authenticate()
   .then(async () => {

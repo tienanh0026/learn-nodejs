@@ -1,45 +1,14 @@
-// import HttpStatusCode from 'http-status-codes'
-
-// export class HttpException1 extends Error {
-//   status: number
-//   constructor(message: string, status: number) {
-//     super()
-//     this.message = message
-//     this.status = status
-//     // this.name = 'HttpException1'
-//     this.name = this.constructor.name
-//   }
-//   getStatus() {
-//     return this.status
-//   }
-// }
-export class HttpException extends Error {
-  status: number
-  constructor(message: string, status: number) {
-    super()
-    this.message = message
-    this.status = status
-    // this.name = 'HttpException1'
-    this.name = this.constructor.name
-  }
-  getStatus() {
-    return this.status
-  }
-}
-
-export class BaseError extends Error {
-  public readonly message: string
+export default class BaseError extends Error {
   public readonly httpCode: number
 
   constructor(message: string, httpCode: number) {
-    super()
-    // Object.setPrototypeOf(this, new.target.prototype)
-
-    this.message = message
+    super(message) // Pass the message to the Error constructor
+    Object.setPrototypeOf(this, new.target.prototype) // Ensure proper prototype chain
+    this.name = this.constructor.name
     this.httpCode = httpCode
-
-    // Error.captureStackTrace(this)
+    Error.captureStackTrace(this, this.constructor)
   }
+
   getStatus() {
     return this.httpCode
   }

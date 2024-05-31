@@ -49,13 +49,13 @@ export const UserModel = database.define<User>(
     createdAt: {
       field: 'created_at',
       type: 'timestamp',
-      allowNull: false,
-      defaultValue: database.fn('NOW')
+      allowNull: false
+      // defaultValue: database.fn('NOW')
     },
     updatedAt: {
       field: 'updated_at',
       type: 'timestamp',
-      defaultValue: database.fn('NOW'),
+      // defaultValue: database.fn('NOW'),
       allowNull: false
     }
   },
