@@ -2,15 +2,17 @@ import { LoginRequest, RegisterRequest } from '@/modules/dto/auth/auth.request'
 import bcrypt from 'bcrypt'
 import BaseError from '@/models/error/error.model'
 import { UserRepositoryService } from '@/sevices-repository/user.repository.service'
-import { JwtPayload, JwtService } from '@/libs/jwt.service'
+import { JwtPayload, JwtService } from '@/libs/jwt/jwt.service'
 import { AuthRepositoryService } from '@/sevices-repository/auth.repository.service'
 import { uid } from 'uid'
 import HttpStatusCode from 'http-status-codes'
+import { MailService } from '@/libs/mail/mail.service'
 
 const userRepository_ = new UserRepositoryService()
 const authRepository_ = new AuthRepositoryService()
 
 const jwtService_ = new JwtService()
+const mailService_ = new MailService()
 export class AuthService {
   async login(user: LoginRequest) {
     try {
@@ -50,6 +52,7 @@ export class AuthService {
       token: token,
       userId: newUser.id
     })
+    await mailService_.sendRegisterSuccessfull(newUser.email, newUser)
     return {
       accessToken: token,
       user: newUser

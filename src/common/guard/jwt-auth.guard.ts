@@ -1,4 +1,4 @@
-import { JwtPayload, JwtService } from '@/libs/jwt.service'
+import { JwtPayload, JwtService } from '@/libs/jwt/jwt.service'
 import { NextFunction, Request, Response } from 'express'
 
 const jwtService_ = new JwtService()
