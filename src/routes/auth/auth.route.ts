@@ -9,5 +9,6 @@ authRoute
   .post('/login', AuthController.login)
   .post('/register', AuthController.register)
   .get('/current', JwtAuthGuard.checkToken, AuthController.currentAuth)
+  .post('/refresh', AuthController.refresh)
 
 export default authRoute

@@ -11,4 +11,15 @@ export class AuthRepositoryService implements AuthRepository {
       where: { token: token }
     })
   }
+  deleteToken(token: string) {
+    return AuthModel.update(
+      { deletedAt: new Date() }, // Set the `deletedAt` field to the current timestamp
+      {
+        where: {
+          token
+        },
+        paranoid: false
+      }
+    )
+  }
 }

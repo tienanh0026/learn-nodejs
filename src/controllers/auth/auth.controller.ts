@@ -1,5 +1,5 @@
-import { LoginRequest, RegisterRequest } from '@/modules/dto/auth/auth.request'
-import { CurrentAuthResponse, LoginResponse, RegisterResponse } from '@/modules/dto/auth/auth.response'
+import { LoginRequest, RefreshRequest, RegisterRequest } from '@/modules/dto/auth/auth.request'
+import { CurrentAuthResponse, LoginResponse, RefreshResponse, RegisterResponse } from '@/modules/dto/auth/auth.response'
 import { RequestHandler } from 'express'
 import { ResponseBody } from '../types'
 import { AuthService } from '@/services/auth/auth.service'
@@ -8,7 +8,7 @@ import { formatResponse } from '@/common/response/response'
 
 export class AuthController {
   constructor(private _authService: AuthService) {}
-  login: RequestHandler<LoginRequest, ResponseBody<LoginResponse>> = async (req, res, next) => {
+  login: RequestHandler<unknown, ResponseBody<LoginResponse>, LoginRequest> = async (req, res, next) => {
     try {
       const loginUser = req.body
       const loginResponse = await this._authService.login(loginUser)
@@ -28,15 +28,23 @@ export class AuthController {
       return next(error)
     }
   }
-  register: RequestHandler<RegisterRequest, ResponseBody<RegisterResponse>> = async (req, res, next) => {
+  register: RequestHandler<unknown, ResponseBody<RegisterResponse>, RegisterRequest> = async (req, res, next) => {
     try {
       const user = req.body
       const registerResponse = await this._authService.register(user)
       const response = formatResponse(registerResponse)
       res.json(response)
     } catch (error) {
-      console.log(next.name)
-
+      next(error)
+    }
+  }
+  refresh: RequestHandler<unknown, ResponseBody<RefreshResponse>, RefreshRequest> = async (req, res, next) => {
+    try {
+      const { refreshToken } = req.body
+      const refreshReponse = await this._authService.refresh(refreshToken)
+      const response = formatResponse(refreshReponse)
+      res.json(response)
+    } catch (error) {
       next(error)
     }
   }

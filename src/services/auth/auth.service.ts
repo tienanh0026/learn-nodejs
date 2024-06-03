@@ -17,6 +17,7 @@ export class AuthService {
   async login(user: LoginRequest) {
     try {
       const existedUser = await userRepository_.findOneByEmail(user.email)
+
       if (!existedUser || !bcrypt.compareSync(user.password, existedUser.password)) {
         throw new BaseError('sai pass', HttpStatusCode.CONFLICT)
       }
@@ -25,9 +26,11 @@ export class AuthService {
         email: existedUser.email
       }
       const accessToken = jwtService_.generateToken(payload)
+      const refreshToken = jwtService_.generateRefreshToken(payload)
       await authRepository_.saveToken({ id: uid(), token: accessToken, userId: existedUser.id })
       return {
-        accessToken: accessToken
+        accessToken,
+        refreshToken
       }
     } catch (error) {
       throw new BaseError('sai pass', HttpStatusCode.CONFLICT)
@@ -56,6 +59,27 @@ export class AuthService {
     return {
       accessToken: token,
       user: newUser
+    }
+  }
+  async refresh(token: string) {
+    try {
+      const refreshPayload = jwtService_.verifyRefreshToken(token)
+      console.log(refreshPayload)
+      const tokenPayload = {
+        sub: refreshPayload.sub,
+        email: refreshPayload.email
+      }
+      const accessToken = jwtService_.generateToken(tokenPayload)
+      await authRepository_.saveToken({
+        id: uid(),
+        token: accessToken,
+        userId: tokenPayload.sub
+      })
+      return {
+        accessToken
+      }
+    } catch (error) {
+      throw new BaseError('Please authenticate', HttpStatusCode.UNAUTHORIZED)
     }
   }
 }

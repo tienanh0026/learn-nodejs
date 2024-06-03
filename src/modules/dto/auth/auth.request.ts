@@ -23,4 +23,8 @@ type RegisterRequest = {
   name: string
 }
 
-export type { LoginRequest, RegisterRequest }
+type RefreshRequest = {
+  refreshToken: string
+}
+
+export type { LoginRequest, RegisterRequest, RefreshRequest }

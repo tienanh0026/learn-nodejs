@@ -3,7 +3,7 @@ export type AuthEntity = {
   userId: string
   token: string
   createdAt: string
-  deletedAt: string
+  deletedAt?: Date
 }
 
 export type AuthCreateParams = Omit<AuthEntity, 'createdAt' | 'deletedAt'>

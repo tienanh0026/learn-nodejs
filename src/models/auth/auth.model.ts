@@ -8,7 +8,7 @@ export class Auth extends Model<AuthEntity, AuthCreateParams> implements AuthEnt
   public userId!: string
   public token!: string
   public createdAt!: string
-  public deletedAt!: string
+  public deletedAt!: Date
 }
 
 export const AuthModel = database.define<Auth>('auth', {
@@ -33,13 +33,11 @@ export const AuthModel = database.define<Auth>('auth', {
   createdAt: {
     field: 'created_at',
     type: 'timestamp',
-    allowNull: false,
-    defaultValue: database.fn('NOW')
+    allowNull: false
   },
   deletedAt: {
     field: 'deleted_at',
-    type: 'timestamp',
-    defaultValue: database.fn('NOW'),
-    allowNull: false
+    type: DataType.DATE,
+    allowNull: true
   }
 })
