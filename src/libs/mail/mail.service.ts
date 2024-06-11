@@ -1,4 +1,4 @@
-import BaseError from '@/models/error/error.model'
+import BaseError from '@/libs/error/error.model'
 import nodemailer from 'nodemailer'
 import Mail from 'nodemailer/lib/mailer'
 import HttpStatusCode from 'http-status-codes'

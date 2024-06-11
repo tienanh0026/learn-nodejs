@@ -1,5 +1,5 @@
 import { JwtPayload, JwtService } from '@/libs/jwt/jwt.service'
-import BaseError from '@/models/error/error.model'
+import BaseError from '@/libs/error/error.model'
 import { AuthRepositoryService } from '@/sevices-repository/auth.repository.service'
 import { NextFunction, Request, Response } from 'express'
 import HttpStatusCode from 'http-status-codes'

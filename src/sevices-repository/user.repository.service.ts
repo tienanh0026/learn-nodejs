@@ -1,5 +1,5 @@
 import { UserCreateParams } from '@/domain/entity/user.entity'
-import { UserModel } from '@/models/user/user.model'
+import { UserModel } from '@/database/models/user/user.model'
 import { UserRepository } from '@/repository/user.repository'
 
 export class UserRepositoryService implements UserRepository {

@@ -1,9 +1,8 @@
 import userRoute from './routes/user/users.route'
-import database from './services/database/database'
 import express from 'express'
-import './services/database/associations'
 import authRoute from './routes/auth/auth.route'
 import { errorHandler } from './common/error/error'
+import sequelizeConnection from './database/connection'
 
 const port = 3002
 
@@ -16,7 +15,7 @@ app.use(() => {
 })
 app.use(errorHandler)
 
-database
+sequelizeConnection
   .authenticate()
   .then(async () => {
     app.listen(port, () => {

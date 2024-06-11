@@ -1,0 +1,11 @@
+
+{
+  "development": {
+    "username": "root",
+    "password": "123456789",
+    "database": "learn-nodejs",
+    "host": "localhost",
+    "dialect": "mysql",
+    "port": 3306
+  }
+}

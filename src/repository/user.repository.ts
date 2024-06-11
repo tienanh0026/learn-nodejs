@@ -1,5 +1,5 @@
 import { UserCreateParams, UserEntityDefault } from '@/domain/entity/user.entity'
-import { User } from '@/models/user/user.model'
+import { User } from '@/database/models/user/user.model'
 
 export interface UserRepository {
   create(user: UserCreateParams): Promise<UserEntityDefault>

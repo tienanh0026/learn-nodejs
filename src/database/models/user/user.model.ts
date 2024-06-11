@@ -1,5 +1,5 @@
+import sequelizeConnection from '@/database/connection'
 import { UserCreateParams, UserEntity } from '@/domain/entity/user.entity'
-import database from '@/services/database/database'
 import { DataType, Model } from 'sequelize-typescript'
 
 export class User extends Model<UserEntity, UserCreateParams> implements UserEntity {
@@ -11,7 +11,7 @@ export class User extends Model<UserEntity, UserCreateParams> implements UserEnt
   public password!: string
 }
 
-export const UserModel = database.define<User>(
+export const UserModel = sequelizeConnection.define<User>(
   'user',
   {
     id: {
@@ -50,7 +50,6 @@ export const UserModel = database.define<User>(
       field: 'created_at',
       type: 'timestamp',
       allowNull: false
-      // defaultValue: database.fn('NOW')
     },
     updatedAt: {
       field: 'updated_at',

@@ -1,5 +1,5 @@
+import sequelizeConnection from '@/database/connection'
 import { AuthCreateParams, AuthEntity } from '@/domain/entity/auth.entity'
-import database from '@/services/database/database'
 import { Model } from 'sequelize'
 import { DataType } from 'sequelize-typescript'
 
@@ -11,7 +11,7 @@ export class Auth extends Model<AuthEntity, AuthCreateParams> implements AuthEnt
   public deletedAt!: Date
 }
 
-export const AuthModel = database.define<Auth>('auth', {
+export const AuthModel = sequelizeConnection.define<Auth>('auth', {
   id: {
     field: 'id',
     type: DataType.UUID,
