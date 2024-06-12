@@ -15,7 +15,11 @@ module.exports = {
         field: 'user_id',
         type: Sequelize.UUID,
         allowNull: false,
-        defaultValue: Sequelize.UUIDV4
+        defaultValue: Sequelize.UUIDV4,
+        references: {
+          model: 'user',
+          key: 'id'
+        }
       },
       token: {
         field: 'token',
@@ -35,6 +39,6 @@ module.exports = {
     })
   },
   async down(queryInterface: QueryInterface) {
-    await queryInterface.dropTable('AuthModels')
+    await queryInterface.dropTable('auth')
   }
 }

@@ -1,19 +1,19 @@
 import sequelizeConnection from '@/database/connection'
-import { RoomCreateParams, RoomEntity } from '@/domain/entity/room.entity'
+import { MessageCreateParams, MessageEntity } from '@/domain/entity/message.entity'
 import { Model } from 'sequelize'
 import { DataType } from 'sequelize-typescript'
 
-export class Room extends Model<RoomEntity, RoomCreateParams> implements RoomEntity {
+export class Message extends Model<MessageEntity, MessageCreateParams> implements MessageEntity {
   public id!: string
-  public name!: string
   public ownerId!: string
-  public image!: string
+  public roomId!: string
+  public content!: string
   public createdAt!: string
-  public updatedAt!: string
+  public updatedAt!: Date
   public deletedAt!: Date
 }
 
-export const RoomModel = sequelizeConnection.define<Room>('room', {
+export const MessageModel = sequelizeConnection.define<Message>('message', {
   id: {
     field: 'id',
     allowNull: false,
@@ -21,25 +21,32 @@ export const RoomModel = sequelizeConnection.define<Room>('room', {
     primaryKey: true,
     defaultValue: DataType.UUIDV4
   },
-  name: {
-    field: 'name',
-    type: DataType.STRING,
-    allowNull: false
-  },
   ownerId: {
     field: 'owner_id',
+    type: DataType.UUID,
     allowNull: false,
-    type: DataType.STRING,
     defaultValue: DataType.UUIDV4,
     references: {
       model: 'user',
       key: 'id'
     }
   },
-  image: {
-    field: 'image',
+  roomId: {
+    field: 'room_id',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+    references: {
+      model: 'room',
+      key: 'id'
+    }
+  },
+  content: {
+    field: 'content',
     type: DataType.STRING,
-    allowNull: true
+    validate: {
+      min: 1
+    }
   },
   createdAt: {
     field: 'created_at',
@@ -48,8 +55,8 @@ export const RoomModel = sequelizeConnection.define<Room>('room', {
   },
   updatedAt: {
     field: 'updated_at',
-    allowNull: false,
-    type: 'timestamp'
+    allowNull: true,
+    type: DataType.DATE
   },
   deletedAt: {
     field: 'deleted_at',

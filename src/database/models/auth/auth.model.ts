@@ -23,7 +23,11 @@ export const AuthModel = sequelizeConnection.define<Auth>('auth', {
     field: 'user_id',
     type: DataType.UUID,
     allowNull: false,
-    defaultValue: DataType.UUIDV4
+    defaultValue: DataType.UUIDV4,
+    references: {
+      model: 'user',
+      key: 'id'
+    }
   },
   token: {
     field: 'token',
