@@ -1,15 +1,14 @@
-import userRoute from './routes/user/users.route'
 import express from 'express'
-import authRoute from './routes/auth/auth.route'
 import { errorHandler } from './common/error/error'
 import sequelizeConnection from './database/connection'
+import route from './routes'
+import './database/associations'
 
 const port = 3002
 
 const app = express()
 app.use(express.json())
-app.use('/', userRoute)
-app.use('/auth', authRoute)
+app.use(route)
 app.use(() => {
   console.log('ádasd')
 })

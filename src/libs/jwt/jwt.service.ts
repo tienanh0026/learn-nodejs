@@ -2,7 +2,7 @@ import * as jwt from 'jsonwebtoken'
 import * as dotenv from 'dotenv'
 
 export type JwtPayload = {
-  sub: string
+  id: string
   email: string
 }
 

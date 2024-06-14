@@ -8,4 +8,6 @@ export type RoomEntity = {
   deletedAt: Date
 }
 
-export type RoomCreateParams = Omit<RoomEntity, 'createdAt' | 'deletedAt'>
+export type RoomUpdateEntity = Omit<RoomEntity, 'createdAt' | 'ownerId' | 'deletedAt'>
+
+export type RoomCreateParams = Omit<RoomEntity, 'createdAt' | 'deletedAt' | 'updatedAt'>

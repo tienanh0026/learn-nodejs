@@ -11,37 +11,44 @@ export class Auth extends Model<AuthEntity, AuthCreateParams> implements AuthEnt
   public deletedAt!: Date
 }
 
-export const AuthModel = sequelizeConnection.define<Auth>('auth', {
-  id: {
-    field: 'id',
-    type: DataType.UUID,
-    allowNull: false,
-    primaryKey: true,
-    defaultValue: DataType.UUIDV4
-  },
-  userId: {
-    field: 'user_id',
-    type: DataType.UUID,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-    references: {
-      model: 'user',
-      key: 'id'
+export const AuthModel = sequelizeConnection.define<Auth>(
+  'auth',
+  {
+    id: {
+      field: 'id',
+      type: DataType.UUID,
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: DataType.UUIDV4
+    },
+    userId: {
+      field: 'user_id',
+      type: DataType.UUID,
+      allowNull: false,
+      defaultValue: DataType.UUIDV4,
+      references: {
+        model: 'user',
+        key: 'id'
+      }
+    },
+    token: {
+      field: 'token',
+      allowNull: false,
+      type: DataType.STRING
+    },
+    createdAt: {
+      field: 'created_at',
+      type: 'timestamp',
+      allowNull: false
+    },
+    deletedAt: {
+      field: 'deleted_at',
+      type: DataType.DATE,
+      allowNull: true
     }
   },
-  token: {
-    field: 'token',
-    allowNull: false,
-    type: DataType.STRING
-  },
-  createdAt: {
-    field: 'created_at',
-    type: 'timestamp',
-    allowNull: false
-  },
-  deletedAt: {
-    field: 'deleted_at',
-    type: DataType.DATE,
-    allowNull: true
+  {
+    tableName: 'auth',
+    updatedAt: false
   }
-})
+)

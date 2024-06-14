@@ -70,6 +70,7 @@ export const UserModel = sequelizeConnection.define<User>(
           exclude: []
         }
       }
-    }
+    },
+    tableName: 'user'
   }
 )

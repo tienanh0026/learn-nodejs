@@ -13,47 +13,53 @@ export class Room extends Model<RoomEntity, RoomCreateParams> implements RoomEnt
   public deletedAt!: Date
 }
 
-export const RoomModel = sequelizeConnection.define<Room>('room', {
-  id: {
-    field: 'id',
-    allowNull: false,
-    type: DataType.UUID,
-    primaryKey: true,
-    defaultValue: DataType.UUIDV4
-  },
-  name: {
-    field: 'name',
-    type: DataType.STRING,
-    allowNull: false
-  },
-  ownerId: {
-    field: 'owner_id',
-    allowNull: false,
-    type: DataType.STRING,
-    defaultValue: DataType.UUIDV4,
-    references: {
-      model: 'user',
-      key: 'id'
+export const RoomModel = sequelizeConnection.define<Room>(
+  'room',
+  {
+    id: {
+      field: 'id',
+      allowNull: false,
+      type: DataType.UUID,
+      primaryKey: true,
+      defaultValue: DataType.UUIDV4
+    },
+    name: {
+      field: 'name',
+      type: DataType.STRING,
+      allowNull: false
+    },
+    ownerId: {
+      field: 'owner_id',
+      allowNull: false,
+      type: DataType.STRING,
+      defaultValue: DataType.UUIDV4,
+      references: {
+        model: 'user',
+        key: 'id'
+      }
+    },
+    image: {
+      field: 'image',
+      type: DataType.STRING,
+      allowNull: true
+    },
+    createdAt: {
+      field: 'created_at',
+      allowNull: false,
+      type: 'timestamp'
+    },
+    updatedAt: {
+      field: 'updated_at',
+      allowNull: false,
+      type: 'timestamp'
+    },
+    deletedAt: {
+      field: 'deleted_at',
+      allowNull: true,
+      type: DataType.DATE
     }
   },
-  image: {
-    field: 'image',
-    type: DataType.STRING,
-    allowNull: true
-  },
-  createdAt: {
-    field: 'created_at',
-    allowNull: false,
-    type: 'timestamp'
-  },
-  updatedAt: {
-    field: 'updated_at',
-    allowNull: false,
-    type: 'timestamp'
-  },
-  deletedAt: {
-    field: 'deleted_at',
-    allowNull: true,
-    type: DataType.DATE
+  {
+    tableName: 'room'
   }
-})
+)

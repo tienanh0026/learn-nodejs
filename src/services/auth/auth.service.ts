@@ -22,7 +22,7 @@ export class AuthService {
         throw new BaseError('sai pass', HttpStatusCode.CONFLICT)
       }
       const payload: JwtPayload = {
-        sub: existedUser.id,
+        id: existedUser.id,
         email: existedUser.email
       }
       const accessToken = jwtService_.generateToken(payload)
@@ -47,7 +47,7 @@ export class AuthService {
     const newUser = await userRepository_.create(user)
     const userPayload: JwtPayload = {
       email: newUser.email,
-      sub: newUser.id
+      id: newUser.id
     }
     const token = jwtService_.generateToken(userPayload)
     await authRepository_.saveToken({
@@ -66,14 +66,14 @@ export class AuthService {
       const refreshPayload = jwtService_.verifyRefreshToken(token)
       console.log(refreshPayload)
       const tokenPayload = {
-        sub: refreshPayload.sub,
+        id: refreshPayload.id,
         email: refreshPayload.email
       }
       const accessToken = jwtService_.generateToken(tokenPayload)
       await authRepository_.saveToken({
         id: uid(),
         token: accessToken,
-        userId: tokenPayload.sub
+        userId: tokenPayload.id
       })
       return {
         accessToken
