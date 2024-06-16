@@ -1,6 +1,6 @@
 import { RoomModel } from '@/database/models/room/room.model'
 import { UserModel } from '@/database/models/user/user.model'
-import { RoomCreateParams, RoomEntity, RoomUpdateEntity } from '@/domain/entity/room.entity'
+import { RoomCreateParams, RoomDetailEntity, RoomEntity, RoomUpdateEntity } from '@/domain/entity/room.entity'
 import { RoomRepository } from '@/repository/room.repository'
 
 export class RoomRepositoryService implements RoomRepository {
@@ -23,22 +23,18 @@ export class RoomRepositoryService implements RoomRepository {
   findAll(): Promise<RoomEntity[]> {
     return RoomModel.findAll()
   }
-  async findOneById(id: string): Promise<RoomEntity> {
-    const room = await RoomModel.findOne({
-      where: { id }
-    })
-    if (!room) throw new Error()
-    else return room
-  }
-  async findDetailOneById(id: string, ownerId: string) {
+  async findOneById(id: string): Promise<RoomDetailEntity> {
     const room = await RoomModel.findOne({
       where: { id },
-      include: { model: UserModel, attributes: ['id', 'email'], where: { id: ownerId } }
+      include: { model: UserModel, as: 'owner', attributes: ['id', 'email', 'name'] }
     })
     if (!room) throw new Error()
-    else return room
+    else {
+      const roomDetail = room.get({ plain: true }) as RoomDetailEntity
+      return roomDetail
+    }
   }
-  async update(param: RoomUpdateEntity): Promise<RoomEntity | null> {
+  async update(param: RoomUpdateEntity): Promise<RoomDetailEntity | null> {
     await RoomModel.update(
       { image: param.image, name: param.name, updatedAt: param.updatedAt },
       {

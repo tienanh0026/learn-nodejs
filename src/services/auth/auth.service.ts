@@ -18,6 +18,13 @@ export class AuthService {
     try {
       const existedUser = await userRepository_.findOneByEmail(user.email)
 
+      console.log(
+        'so sanh password',
+        user.password,
+        existedUser?.password,
+        bcrypt.compareSync(user.password, existedUser?.password || '')
+      )
+
       if (!existedUser || !bcrypt.compareSync(user.password, existedUser.password)) {
         throw new BaseError('sai pass', HttpStatusCode.CONFLICT)
       }
@@ -44,6 +51,8 @@ export class AuthService {
   async register(user: RegisterRequest) {
     const existedUser = await userRepository_.findByEmail(user.email)
     if (existedUser) throw new BaseError('Existed email', HttpStatusCode.CONFLICT)
+    console.log('user', user)
+    user.password = await bcrypt.hash(user.password, 10)
     const newUser = await userRepository_.create(user)
     const userPayload: JwtPayload = {
       email: newUser.email,

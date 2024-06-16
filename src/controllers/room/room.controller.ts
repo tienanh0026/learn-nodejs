@@ -5,7 +5,7 @@ import { RequestHandler } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ResponseBody } from '../types'
 import { formatResponse } from '@/common/response/response'
-import { RoomCreateResponse } from '@/modules/dto/room/room.response'
+import { RoomCreateResponse, RoomDetailResponse, RoomGetListResponse } from '@/modules/dto/room/room.response'
 
 export class RoomController {
   constructor(private _roomService: RoomService) {}
@@ -34,6 +34,25 @@ export class RoomController {
       //
     } catch (error) {
       return next(error)
+    }
+  }
+  getRoom: RequestHandler<ParamsDictionary, ResponseBody<RoomDetailResponse>> = async (req, res, next) => {
+    try {
+      const roomId = req.params.roomId
+      const room = await this._roomService.getRoom(roomId)
+      const response = formatResponse(room)
+      res.json(response)
+    } catch (error) {
+      next(error)
+    }
+  }
+  getRoomList: RequestHandler<ParamsDictionary, ResponseBody<RoomGetListResponse>> = async (_req, res, next) => {
+    try {
+      const roomList = await this._roomService.getRoomList()
+      const response = formatResponse(roomList)
+      res.json(response)
+    } catch (error) {
+      next(error)
     }
   }
 }

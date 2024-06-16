@@ -1,5 +1,9 @@
-import { RoomEntity } from '@/domain/entity/room.entity'
+import { RoomDetailEntity, RoomEntity } from '@/domain/entity/room.entity'
 
 type RoomCreateResponse = RoomEntity
 
-export type { RoomCreateResponse }
+type RoomGetListResponse = RoomEntity[]
+
+type RoomDetailResponse = RoomDetailEntity
+
+export type { RoomCreateResponse, RoomGetListResponse, RoomDetailResponse }

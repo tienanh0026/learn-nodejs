@@ -67,6 +67,7 @@ export const MessageModel = sequelizeConnection.define<Message>(
     }
   },
   {
-    tableName: 'message'
+    tableName: 'message',
+    updatedAt: false
   }
 )

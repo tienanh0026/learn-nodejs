@@ -33,6 +33,9 @@ export class RoomService {
       throw new BaseError('co loi xay ra', HttpStatusCode.SERVICE_UNAVAILABLE)
     }
   }
+  async getRoom(roomId: string) {
+    return await _roomRepository.findOneById(roomId)
+  }
   async editRoom(req: Request<ParamsDictionary, unknown, RoomEditReq>) {
     const roomId = req.params.roomId
     const token = getToken(req)
@@ -40,9 +43,6 @@ export class RoomService {
     const jwtPayload = _jwtService.verifyAccessToken(token)
     const user = await _userService.findOneById(jwtPayload.id)
     const room = await _roomRepository.findOneById(roomId)
-    const room1 = await _roomRepository.findDetailOneById(roomId, user.id)
-    console.log(room1.toJSON())
-
     if (room.ownerId !== user.id) {
       throw new BaseError('not owner', HttpStatusCode.UNAUTHORIZED)
     }
@@ -52,6 +52,8 @@ export class RoomService {
       updatedAt: new Date().toISOString()
     }
     return _roomRepository.update(roomParam)
-    //   const jwtPayload = _jwtService.verifyAccessToken(params.token)
+  }
+  async getRoomList() {
+    return await _roomRepository.findAll()
   }
 }

@@ -6,7 +6,12 @@ const roomRoute = express()
 const RoomService = new RoomServiceClass()
 const RoomController = new RoomControllerClass(RoomService)
 const JwtAuthGuard = new JwtAuthGuardClass()
-roomRoute.post('/room/create', JwtAuthGuard.checkToken, RoomController.createRoom)
-roomRoute.post('/room/:roomId/edit', JwtAuthGuard.checkToken, RoomController.editRoom)
+
+roomRoute
+  .use(JwtAuthGuard.checkToken)
+  .post('/room/create', RoomController.createRoom)
+  .post('/room/:roomId/edit', RoomController.editRoom)
+  .get('/room/list', RoomController.getRoomList)
+  .get('/room/:roomId', RoomController.getRoom)
 
 export default roomRoute

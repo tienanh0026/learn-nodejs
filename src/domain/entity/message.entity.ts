@@ -8,4 +8,4 @@ export type MessageEntity = {
   deletedAt?: Date
 }
 
-export type MessageCreateParams = Omit<MessageEntity, 'createdAt' | 'deletedAt'>
+export type MessageCreateParams = Omit<MessageEntity, 'createdAt' | 'deletedAt' | 'updatedAt'>
