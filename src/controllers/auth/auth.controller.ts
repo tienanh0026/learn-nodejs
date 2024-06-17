@@ -11,6 +11,7 @@ export class AuthController {
   login: RequestHandler<unknown, ResponseBody<LoginResponse>, LoginRequest> = async (req, res, next) => {
     try {
       const loginUser = req.body
+      console.log(loginUser)
       const loginResponse = await this._authService.login(loginUser)
       const response = formatResponse(loginResponse)
       res.json(response)

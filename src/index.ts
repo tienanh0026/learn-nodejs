@@ -6,7 +6,7 @@ import './database/associations'
 import { Server } from 'socket.io'
 import http from 'http'
 import { socketMiddleware } from './libs/socket/middleware'
-
+import cors from 'cors'
 const port = 3002
 
 const app = express()
@@ -24,7 +24,16 @@ io.on('connection', (socket) => {
 
 io.use(socketMiddleware)
 
+app.use(
+  cors({
+    origin: '*', // Or use '*' to allow all origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'] // Specify allowed headers
+  })
+)
+
 app.use(express.json())
+app.use(express.urlencoded())
 app.use(route)
 app.use(errorHandler)
 

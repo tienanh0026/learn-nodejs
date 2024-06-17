@@ -17,15 +17,8 @@ export class AuthService {
   async login(user: LoginRequest) {
     try {
       const existedUser = await userRepository_.findOneByEmail(user.email)
-
-      console.log(
-        'so sanh password',
-        user.password,
-        existedUser?.password,
-        bcrypt.compareSync(user.password, existedUser?.password || '')
-      )
-
-      if (!existedUser || !bcrypt.compareSync(user.password, existedUser.password)) {
+      if (!existedUser) throw new BaseError('Email not found', HttpStatusCode.CONFLICT)
+      if (!bcrypt.compareSync(user.password, existedUser.password)) {
         throw new BaseError('sai pass', HttpStatusCode.CONFLICT)
       }
       const payload: JwtPayload = {
@@ -40,7 +33,10 @@ export class AuthService {
         refreshToken
       }
     } catch (error) {
-      throw new BaseError('sai pass', HttpStatusCode.CONFLICT)
+      if (error instanceof BaseError) {
+        throw new BaseError('cannot login', HttpStatusCode.BAD_REQUEST)
+      }
+      throw error
     }
   }
   async currentAuth(email: string) {
