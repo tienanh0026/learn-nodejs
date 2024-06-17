@@ -34,9 +34,9 @@ export class AuthService {
       }
     } catch (error) {
       if (error instanceof BaseError) {
-        throw new BaseError('cannot login', HttpStatusCode.BAD_REQUEST)
+        throw error
       }
-      throw error
+      throw new BaseError('cannot login', HttpStatusCode.BAD_REQUEST)
     }
   }
   async currentAuth(email: string) {
@@ -68,6 +68,8 @@ export class AuthService {
   }
   async refresh(token: string) {
     try {
+      console.log('token', token)
+
       const refreshPayload = jwtService_.verifyRefreshToken(token)
       console.log(refreshPayload)
       const tokenPayload = {
@@ -84,6 +86,8 @@ export class AuthService {
         accessToken
       }
     } catch (error) {
+      console.log(error)
+
       throw new BaseError('Please authenticate', HttpStatusCode.UNAUTHORIZED)
     }
   }
