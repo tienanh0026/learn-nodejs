@@ -7,6 +7,7 @@ import { Server } from 'socket.io'
 import http from 'http'
 import { socketMiddleware } from './libs/socket/middleware'
 import cors from 'cors'
+
 const port = 3002
 
 const app = express()
@@ -19,28 +20,32 @@ const io = new Server(server, {
 })
 
 io.on('connection', (socket) => {
-  console.log(socket)
+  console.log('New socket connection:', socket.id)
 })
 
 io.use(socketMiddleware)
 
-app.use(
-  cors({
-    origin: '*', // Or use '*' to allow all origins
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization'] // Specify allowed headers
-  })
-)
+const corsOptions = {
+  origin: '*', // Or specify your frontend origin instead of '*'
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Include OPTIONS
+  allowedHeaders: ['Content-Type', 'Authorization'] // Specify allowed headers
+}
+
+app.use(cors(corsOptions))
+
+// Explicitly handle OPTIONS requests
+app.options('*', cors(corsOptions))
 
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
+
 app.use(route)
 app.use(errorHandler)
 
 sequelizeConnection
   .authenticate()
   .then(async () => {
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log('Server is running on http://localhost:' + port)
     })
     console.log('Data Source has been initialized!')

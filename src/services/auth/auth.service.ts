@@ -88,7 +88,7 @@ export class AuthService {
     } catch (error) {
       console.log(error)
 
-      throw new BaseError('Please authenticate', HttpStatusCode.UNAUTHORIZED)
+      throw new BaseError('Please authenticate', HttpStatusCode.FORBIDDEN)
     }
   }
 }
