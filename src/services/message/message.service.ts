@@ -1,4 +1,5 @@
 import { ResponseBody } from '@/controllers/types'
+import { MessageEntity } from '@/domain/entity/message.entity'
 import BaseError from '@/libs/error/error.model'
 import { JwtService } from '@/libs/jwt/jwt.service'
 import { CreateMessageRequest } from '@/modules/dto/message/message.request'
@@ -38,5 +39,9 @@ export class MessageService {
         throw new BaseError('cannot create message', HttpStatusCode.BAD_REQUEST)
       }
     }
+  }
+  async getMessageList(req: Request<ParamsDictionary, ResponseBody<MessageEntity[]>>) {
+    const roomId = req.params.roomId
+    return await _messageRepositoryService.getList(roomId)
   }
 }
