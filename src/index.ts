@@ -3,26 +3,19 @@ import { errorHandler } from './common/error/error'
 import sequelizeConnection from './database/connection'
 import route from './routes'
 import './database/associations'
-import { Server } from 'socket.io'
 import http from 'http'
 import { socketMiddleware } from './libs/socket/middleware'
 import cors from 'cors'
+import { getIo, initSocket } from './libs/socket'
 
 const port = 3002
 
 const app = express()
 const server = http.createServer(app)
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  }
-})
 
-io.on('connection', (socket) => {
-  console.log('New socket connection:', socket.id)
-})
+initSocket(server)
 
+const io = getIo()
 io.use(socketMiddleware)
 
 const corsOptions = {
