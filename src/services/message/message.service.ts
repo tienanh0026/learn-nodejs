@@ -2,6 +2,7 @@ import { ResponseBody } from '@/controllers/types'
 import { MessageEntity } from '@/domain/entity/message.entity'
 import BaseError from '@/libs/error/error.model'
 import { JwtService } from '@/libs/jwt/jwt.service'
+import { getIo } from '@/libs/socket'
 import { CreateMessageRequest } from '@/modules/dto/message/message.request'
 import { MessageRepositoryService } from '@/sevices-repository/message.repository.service'
 import { RoomRepositoryService } from '@/sevices-repository/room.repository.service'
@@ -33,7 +34,9 @@ export class MessageService {
         ownerId: user.id,
         roomId: room.id
       }
-      await _messageRepositoryService.create(newMessage)
+      const message = await _messageRepositoryService.create(newMessage)
+      const io = getIo()
+      io.emit(`${roomId}-message`, message)
     } catch (error) {
       if (error instanceof BaseError) {
         throw new BaseError('cannot create message', HttpStatusCode.BAD_REQUEST)

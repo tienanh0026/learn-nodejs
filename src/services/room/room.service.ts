@@ -8,6 +8,7 @@ import { uid } from 'uid'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { getToken } from '@/utilities/jwt'
 import { UserService } from '../user/user.service'
+import { getIo } from '@/libs/socket'
 type RoomCreateReq = {
   name: string
   token: string
@@ -28,6 +29,8 @@ export class RoomService {
         id: uid()
       }
       const newRoom = await _roomRepository.create(createRoomParams)
+      const io = getIo()
+      io.emit('room-list', newRoom)
       return newRoom
     } catch (error) {
       throw new BaseError('co loi xay ra', HttpStatusCode.SERVICE_UNAVAILABLE)
