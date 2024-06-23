@@ -7,7 +7,7 @@ export type RoomEntity = {
   image?: string
   createdAt: string
   updatedAt: string
-  deletedAt: Date
+  deletedAt: string
 }
 
 export type RoomDetailEntity = {
@@ -17,7 +17,7 @@ export type RoomDetailEntity = {
   image?: string
   createdAt: string
   updatedAt: string
-  deletedAt: Date
+  deletedAt: string
   owner: Pick<UserEntity, 'id' | 'email' | 'name'>
 }
 

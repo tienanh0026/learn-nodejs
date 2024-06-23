@@ -10,7 +10,7 @@ export class Room extends Model<RoomEntity, RoomCreateParams> implements RoomEnt
   public image!: string
   public createdAt!: string
   public updatedAt!: string
-  public deletedAt!: Date
+  public deletedAt!: string
 }
 
 export const RoomModel = sequelizeConnection.define<Room>(
@@ -56,10 +56,11 @@ export const RoomModel = sequelizeConnection.define<Room>(
     deletedAt: {
       field: 'deleted_at',
       allowNull: true,
-      type: DataType.DATE
+      type: 'timestamp'
     }
   },
   {
-    tableName: 'room'
+    tableName: 'room',
+    paranoid: true
   }
 )

@@ -6,7 +6,6 @@ const messageRoute = Router()
 const JwtAuthGuard = new JwtAuthGuardClass()
 const MessageController = new MessageControllerClass()
 messageRoute
-  .use(JwtAuthGuard.checkToken)
-  .post('/:roomId/message/', MessageController.sendMessage)
-  .get('/:roomId/message/list', MessageController.getMessageList)
+  .post('/:roomId/message/', JwtAuthGuard.checkToken, MessageController.sendMessage)
+  .get('/:roomId/message/list', JwtAuthGuard.checkToken, MessageController.getMessageList)
 export default messageRoute

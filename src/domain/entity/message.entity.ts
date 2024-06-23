@@ -4,8 +4,8 @@ export type MessageEntity = {
   roomId: string
   content: string
   createdAt: string
-  updatedAt: Date
-  deletedAt?: Date
+  updatedAt: string
+  deletedAt?: string
 }
 
 export type MessageCreateParams = Omit<MessageEntity, 'createdAt' | 'deletedAt' | 'updatedAt'>

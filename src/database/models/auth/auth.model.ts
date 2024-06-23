@@ -8,7 +8,7 @@ export class Auth extends Model<AuthEntity, AuthCreateParams> implements AuthEnt
   public userId!: string
   public token!: string
   public createdAt!: string
-  public deletedAt!: Date
+  public deletedAt!: string
 }
 
 export const AuthModel = sequelizeConnection.define<Auth>(
@@ -43,12 +43,13 @@ export const AuthModel = sequelizeConnection.define<Auth>(
     },
     deletedAt: {
       field: 'deleted_at',
-      type: DataType.DATE,
+      type: 'timestamp',
       allowNull: true
     }
   },
   {
     tableName: 'auth',
-    updatedAt: false
+    updatedAt: false,
+    paranoid: true
   }
 )

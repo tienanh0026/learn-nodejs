@@ -1,20 +1,21 @@
 import sequelizeConnection from '@/database/connection'
-import { MessageCreateParams, MessageEntity } from '@/domain/entity/message.entity'
+import { SubscriptionCreateParams, SubscriptionEnity } from '@/domain/entity/subscription.entity'
 import { Model } from 'sequelize'
 import { DataType } from 'sequelize-typescript'
 
-export class Message extends Model<MessageEntity, MessageCreateParams> implements MessageEntity {
+export class Subscription extends Model<SubscriptionEnity, SubscriptionCreateParams> implements SubscriptionEnity {
   public id!: string
-  public ownerId!: string
+  public userId!: string
   public roomId!: string
-  public content!: string
+  public endpoint!: string
+  public key!: string
   public createdAt!: string
   public updatedAt!: string
   public deletedAt!: string
 }
 
-export const MessageModel = sequelizeConnection.define<Message>(
-  'message',
+export const SubscriptionModel = sequelizeConnection.define<Subscription>(
+  'subscription',
   {
     id: {
       field: 'id',
@@ -23,8 +24,8 @@ export const MessageModel = sequelizeConnection.define<Message>(
       primaryKey: true,
       defaultValue: DataType.UUIDV4
     },
-    ownerId: {
-      field: 'owner_id',
+    userId: {
+      field: 'user_id',
       type: DataType.UUID,
       allowNull: false,
       defaultValue: DataType.UUIDV4,
@@ -43,12 +44,13 @@ export const MessageModel = sequelizeConnection.define<Message>(
         key: 'id'
       }
     },
-    content: {
-      field: 'content',
-      type: DataType.STRING,
-      validate: {
-        min: 1
-      }
+    endpoint: {
+      type: DataType.TEXT,
+      allowNull: false
+    },
+    key: {
+      type: DataType.JSON,
+      allowNull: false
     },
     createdAt: {
       field: 'created_at',
@@ -57,7 +59,7 @@ export const MessageModel = sequelizeConnection.define<Message>(
     },
     updatedAt: {
       field: 'updated_at',
-      allowNull: true,
+      allowNull: false,
       type: 'timestamp'
     },
     deletedAt: {
@@ -67,8 +69,7 @@ export const MessageModel = sequelizeConnection.define<Message>(
     }
   },
   {
-    tableName: 'message',
-    updatedAt: false,
+    tableName: 'subscription',
     paranoid: true
   }
 )

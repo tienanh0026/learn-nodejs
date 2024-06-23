@@ -1,6 +1,7 @@
 import { AuthCreateParams, AuthEntity } from '@/domain/entity/auth.entity'
 import { AuthModel } from '@/database/models/auth/auth.model'
 import { AuthRepository } from '@/repository/auth.repository'
+import { Sequelize } from 'sequelize'
 
 export class AuthRepositoryService implements AuthRepository {
   saveToken(auth: AuthCreateParams): Promise<AuthEntity> {
@@ -13,7 +14,7 @@ export class AuthRepositoryService implements AuthRepository {
   }
   deleteToken(token: string) {
     return AuthModel.update(
-      { deletedAt: new Date() }, // Set the `deletedAt` field to the current timestamp
+      { deletedAt: Sequelize.fn('NOW') },
       {
         where: {
           token

@@ -2,6 +2,7 @@ import { RoomModel } from '@/database/models/room/room.model'
 import { UserModel } from '@/database/models/user/user.model'
 import { RoomCreateParams, RoomDetailEntity, RoomEntity, RoomUpdateEntity } from '@/domain/entity/room.entity'
 import { RoomRepository } from '@/repository/room.repository'
+import { Sequelize } from 'sequelize'
 
 export class RoomRepositoryService implements RoomRepository {
   create(room: RoomCreateParams): Promise<RoomEntity> {
@@ -10,7 +11,7 @@ export class RoomRepositoryService implements RoomRepository {
   delete(id: string) {
     return RoomModel.update(
       {
-        deletedAt: new Date()
+        deletedAt: Sequelize.fn('NOW')
       },
       {
         where: {

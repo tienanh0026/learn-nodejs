@@ -3,8 +3,13 @@ import userRoute from './user/users.route'
 import authRoute from './auth/auth.route'
 import roomRoute from './room/room.route'
 import messageRoute from './message/message.route'
+import subscriptionRoute from './subscription/subscription.route'
 
 const route = express()
-route.use('/', userRoute).use('/auth', authRoute).use('/', roomRoute).use('/', messageRoute)
+route.use('/', userRoute)
+route.use('/auth', authRoute)
+route.use('/', roomRoute)
+route.use('/', messageRoute)
+route.use('/', subscriptionRoute)
 
 export default route
