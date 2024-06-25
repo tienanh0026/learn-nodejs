@@ -1,5 +1,5 @@
 type RoomSubcribeNotiRequest = {
-  key: string
+  key: JSON
   subscriptionId: string
   endpoint: string
 }

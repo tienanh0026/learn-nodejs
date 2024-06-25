@@ -8,7 +8,7 @@ export class Subscription extends Model<SubscriptionEnity, SubscriptionCreatePar
   public userId!: string
   public roomId!: string
   public endpoint!: string
-  public key!: string
+  public key!: JSON
   public createdAt!: string
   public updatedAt!: string
   public deletedAt!: string

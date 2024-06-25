@@ -3,7 +3,7 @@ type SubscriptionEnity = {
   userId: string
   roomId: string
   endpoint: string
-  key: string
+  key: JSON
   createdAt: string
   updatedAt: string
   deletedAt: string | null

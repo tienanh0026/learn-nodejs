@@ -10,6 +10,8 @@ export const initSocket = (server: HttpServer): void => {
       methods: ['GET', 'POST']
     }
   })
+  console.log('1231231')
+
   io.on('connection', (socket) => {
     console.log('a user connected')
     socket.on('disconnect', () => {
