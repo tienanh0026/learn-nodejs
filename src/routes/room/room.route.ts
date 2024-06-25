@@ -8,7 +8,7 @@ const RoomController = new RoomControllerClass(RoomService)
 const JwtAuthGuard = new JwtAuthGuardClass()
 
 roomRoute
-  .use('/room', JwtAuthGuard.checkToken)
+  .use('/', JwtAuthGuard.checkToken)
   .post('/create', RoomController.createRoom)
   .post('/:roomId/edit', RoomController.editRoom)
   .get('/list', RoomController.getRoomList)

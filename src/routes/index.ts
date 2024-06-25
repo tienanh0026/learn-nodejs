@@ -8,7 +8,7 @@ import subscriptionRoute from './subscription/subscription.route'
 const route = express()
 route.use('/', userRoute)
 route.use('/auth', authRoute)
-route.use('/', roomRoute)
+route.use('/room', roomRoute)
 route.use('/', messageRoute)
 route.use('/', subscriptionRoute)
 
