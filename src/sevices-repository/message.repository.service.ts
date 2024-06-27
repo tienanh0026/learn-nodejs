@@ -1,7 +1,8 @@
-import { MessageModel } from '@/database/models/message/message.model'
+import { Message, MessageModel } from '@/database/models/message/message.model'
 import { RoomModel } from '@/database/models/room/room.model'
 import { MessageCreateParams, MessageEntity, MessageRoomEntity } from '@/domain/entity/message.entity'
 import { MessageRepository } from '@/repository/message.repository'
+import { Attributes, FindOptions, WhereOptions } from 'sequelize'
 
 export class MessageRepositoryService implements MessageRepository {
   create(message: MessageCreateParams): Promise<MessageEntity> {
@@ -26,6 +27,12 @@ export class MessageRepositoryService implements MessageRepository {
         roomId: roomId
       },
       order: ['createdAt']
+    })
+  }
+  findAll(params: WhereOptions<MessageEntity>, options: FindOptions<Attributes<Message>>) {
+    return MessageModel.findAll({
+      where: params,
+      ...options
     })
   }
 }

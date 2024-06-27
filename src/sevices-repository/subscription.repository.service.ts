@@ -20,7 +20,7 @@ export class SubscriptionRepositoryService implements SubscriptionRepository {
   delete(params: Partial<SubscriptionEnity>) {
     return SubscriptionModel.destroy({ where: params, force: true })
   }
-  findAll(params: WhereOptions<SubscriptionEnity>) {
+  findAll(params?: WhereOptions<SubscriptionEnity>) {
     return SubscriptionModel.findAll({ where: params, paranoid: true })
   }
 }

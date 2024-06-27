@@ -17,10 +17,10 @@ const sendPushNotification = async (messageId: string, ownerId: string) => {
     console.log(message)
 
     const subscriptionList = await _subscriptionRepositoryService.findAll({
-      roomId: message.room.id
-      //   userId: {
-      //     [Op.ne]: ownerId
-      //   }
+      roomId: message.room.id,
+      userId: {
+        [Op.ne]: ownerId
+      }
     })
     console.log('ádasdasd', subscriptionList)
 
@@ -46,6 +46,9 @@ const sendPushNotification = async (messageId: string, ownerId: string) => {
           console.log('Push notification sent successfully')
         })
         .catch((error) => {
+          _subscriptionRepositoryService.delete({
+            id: subscription.id
+          })
           console.error('Failed to send push notification', error)
         })
     }
@@ -54,4 +57,25 @@ const sendPushNotification = async (messageId: string, ownerId: string) => {
   }
 }
 
-export { webpush, sendPushNotification }
+const validateSubscriptions = async () => {
+  try {
+    const subscriptionList = await _subscriptionRepositoryService.findAll()
+    for (const subscription of subscriptionList) {
+      const pushSubscription = {
+        endpoint: subscription.endpoint,
+        keys: JSON.parse(JSON.stringify(subscription.key)) as { p256dh: string; auth: string }
+      }
+      console.log(pushSubscription)
+      webpush.sendNotification(pushSubscription, JSON.stringify({ silent: true })).catch((error) => {
+        _subscriptionRepositoryService.delete({
+          id: subscription.id
+        })
+        console.error('Failed to send push notification', error)
+      })
+    }
+  } catch (error) {
+    //
+  }
+}
+
+export { webpush, sendPushNotification, validateSubscriptions }
