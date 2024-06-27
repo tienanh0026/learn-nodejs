@@ -5,15 +5,16 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { ResponseBody } from '../types'
 import { CreateMessageRequest } from '@/modules/dto/message/message.request'
 import { MessageEntity } from '@/domain/entity/message.entity'
+import { sendPushNotification } from '@/libs/web-push'
 const MessageService = new MessageServiceClass()
 
 export class MessageController {
   sendMessage: RequestHandler<ParamsDictionary, ResponseBody<null>, CreateMessageRequest> = async (req, res, next) => {
     try {
-      console.log(req)
-      await MessageService.createMessage(req)
+      const message = await MessageService.createMessage(req)
       const response = formatResponse(null)
       res.json(response)
+      if (message) sendPushNotification(message.id, message.ownerId)
     } catch (error) {
       next(error)
     }

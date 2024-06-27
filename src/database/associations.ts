@@ -13,7 +13,7 @@ RoomModel.hasOne(UserModel, {
   sourceKey: 'ownerId',
   as: 'owner'
 })
-MessageModel.hasMany(RoomModel, {
+MessageModel.hasOne(RoomModel, {
   foreignKey: 'id',
   sourceKey: 'roomId',
   as: 'room'

@@ -3,11 +3,9 @@ import { MessageEntity } from '@/domain/entity/message.entity'
 import BaseError from '@/libs/error/error.model'
 import { JwtService } from '@/libs/jwt/jwt.service'
 import { getIo } from '@/libs/socket'
-// import { webpush } from '@/libs/web-push'
 import { CreateMessageRequest } from '@/modules/dto/message/message.request'
 import { MessageRepositoryService } from '@/sevices-repository/message.repository.service'
 import { RoomRepositoryService } from '@/sevices-repository/room.repository.service'
-import { SubscriptionRepositoryService } from '@/sevices-repository/subscription.repository.service'
 import { UserRepositoryService } from '@/sevices-repository/user.repository.service'
 import { getToken } from '@/utilities/jwt'
 import { Request } from 'express'
@@ -19,7 +17,7 @@ const _messageRepositoryService = new MessageRepositoryService()
 const _jwtService = new JwtService()
 const _userRepositoryService = new UserRepositoryService()
 const _roomRepositoryService = new RoomRepositoryService()
-// const _subscriptionRepositoryService = new SubscriptionRepositoryService()
+
 export class MessageService {
   async createMessage(req: Request<ParamsDictionary, ResponseBody<null>, CreateMessageRequest>) {
     try {
@@ -39,6 +37,7 @@ export class MessageService {
       const message = await _messageRepositoryService.create(newMessage)
       const io = getIo()
       io.emit(`${roomId}-message`, message)
+      return message
       // _subscriptionRepositoryService
       //   .findAll({
       //     roomId: room.id
@@ -53,10 +52,14 @@ export class MessageService {
       //       }
       //       console.log(pushSubscription)
 
-      //       webpush.sendNotification(
-      //         pushSubscription,
-      //         JSON.stringify({ title: `In room ${room.name}`, body: message.content })
-      //       )
+      //       webpush
+      //         .sendNotification(
+      //           pushSubscription,
+      //           JSON.stringify({ title: `In room ${room.name}`, body: message.content })
+      //         )
+      //         .then(() => {
+      //           console.log('success')
+      //         })
       //     }
       //   })
       //   .catch((error) => {

@@ -18,6 +18,13 @@ export class SubscriptionService {
     const token = getToken(req)
     const userId = _jwtService.verifyAccessToken(token).id
     const { endpoint, key, subscriptionId } = req.body
+    const existedList = await _subscriptionRepositoryService.findAll({
+      roomId: roomId,
+      userId: userId,
+      endpoint: endpoint,
+      key: key
+    })
+    if (existedList.length > 0) return existedList[0]
     const newSubscription = await _subscriptionRepositoryService.create({
       id: subscriptionId,
       roomId: roomId,

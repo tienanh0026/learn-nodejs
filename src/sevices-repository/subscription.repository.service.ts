@@ -1,7 +1,7 @@
 import { SubscriptionModel } from '@/database/models/subscription/subscription.model'
 import { SubscriptionCreateParams, SubscriptionEnity } from '@/domain/entity/subscription.entity'
 import { SubscriptionRepository } from '@/repository/subscription.repository'
-import { Sequelize } from 'sequelize'
+import { Sequelize, WhereOptions } from 'sequelize'
 
 export class SubscriptionRepositoryService implements SubscriptionRepository {
   create(params: SubscriptionCreateParams): Promise<SubscriptionEnity> {
@@ -20,7 +20,7 @@ export class SubscriptionRepositoryService implements SubscriptionRepository {
   delete(params: Partial<SubscriptionEnity>) {
     return SubscriptionModel.destroy({ where: params, force: true })
   }
-  findAll(params: Partial<SubscriptionEnity>) {
+  findAll(params: WhereOptions<SubscriptionEnity>) {
     return SubscriptionModel.findAll({ where: params, paranoid: true })
   }
 }

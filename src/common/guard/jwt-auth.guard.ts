@@ -23,7 +23,6 @@ export class JwtAuthGuard {
         next()
       } else throw new Error()
     } catch (err) {
-      console.log(err)
       if (err instanceof TokenExpiredError) {
         const error = new BaseError('Token expired', HttpStatusCode.UNAUTHORIZED)
         await authRepository_.deleteToken(token)
