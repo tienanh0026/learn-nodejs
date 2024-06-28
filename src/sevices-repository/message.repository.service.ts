@@ -1,5 +1,6 @@
 import { Message, MessageModel } from '@/database/models/message/message.model'
 import { RoomModel } from '@/database/models/room/room.model'
+import { UserModel } from '@/database/models/user/user.model'
 import { MessageCreateParams, MessageEntity, MessageRoomEntity } from '@/domain/entity/message.entity'
 import { MessageRepository } from '@/repository/message.repository'
 import { Attributes, FindOptions, WhereOptions } from 'sequelize'
@@ -26,13 +27,23 @@ export class MessageRepositoryService implements MessageRepository {
       where: {
         roomId: roomId
       },
-      order: ['createdAt']
+      order: ['createdAt'],
+      include: {
+        model: UserModel,
+        as: 'owner',
+        attributes: ['id', 'name', 'email']
+      }
     })
   }
-  findAll(params: WhereOptions<MessageEntity>, options: FindOptions<Attributes<Message>>) {
-    return MessageModel.findAll({
+  findAndCountAll(params: WhereOptions<MessageEntity>, options?: FindOptions<Attributes<Message>>) {
+    return MessageModel.findAndCountAll({
       where: params,
-      ...options
+      ...options,
+      include: {
+        model: UserModel,
+        as: 'owner',
+        attributes: ['id', 'name', 'email']
+      }
     })
   }
 }

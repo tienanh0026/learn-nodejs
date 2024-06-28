@@ -3,9 +3,9 @@ import { MessageService as MessageServiceClass } from '@/services/message/messag
 import { RequestHandler } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ResponseBody } from '../types'
-import { CreateMessageRequest } from '@/modules/dto/message/message.request'
-import { MessageEntity } from '@/domain/entity/message.entity'
+import { CreateMessageRequest, GetMessageListRequestQuery } from '@/modules/dto/message/message.request'
 import { sendPushNotification } from '@/libs/web-push'
+import { GetMessageListResponse } from '@/modules/dto/message/message.response'
 const MessageService = new MessageServiceClass()
 
 export class MessageController {
@@ -19,7 +19,12 @@ export class MessageController {
       next(error)
     }
   }
-  getMessageList: RequestHandler<ParamsDictionary, ResponseBody<MessageEntity[]>> = async (req, res, next) => {
+  getMessageList: RequestHandler<
+    ParamsDictionary,
+    ResponseBody<GetMessageListResponse>,
+    null,
+    GetMessageListRequestQuery
+  > = async (req, res, next) => {
     try {
       const messageList = await MessageService.getMessageList(req)
       const response = formatResponse(messageList)

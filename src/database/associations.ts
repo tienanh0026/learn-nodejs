@@ -19,6 +19,12 @@ MessageModel.hasOne(RoomModel, {
   as: 'room'
 })
 
+MessageModel.hasOne(UserModel, {
+  foreignKey: 'id',
+  sourceKey: 'ownerId',
+  as: 'owner'
+})
+
 SubscriptionModel.belongsTo(UserModel, {
   foreignKey: 'id'
 })

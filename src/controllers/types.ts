@@ -3,4 +3,12 @@ type ResponseBody<T> = {
   data: T
 }
 
-export { ResponseBody }
+type ResponsePaginationData<T> = {
+  list: T
+  perPage: number
+  currentPage: number
+  total: number
+  totalPages: number
+}
+
+export { ResponseBody, ResponsePaginationData }

@@ -2,4 +2,9 @@ type CreateMessageRequest = {
   content: string
 }
 
-export type { CreateMessageRequest }
+type GetMessageListRequestQuery = {
+  page?: string
+  perPage?: string
+}
+
+export type { CreateMessageRequest, GetMessageListRequestQuery }

@@ -1,9 +1,9 @@
 import { ResponseBody } from '@/controllers/types'
-import { MessageEntity } from '@/domain/entity/message.entity'
 import BaseError from '@/libs/error/error.model'
 import { JwtService } from '@/libs/jwt/jwt.service'
 import { getIo } from '@/libs/socket'
-import { CreateMessageRequest } from '@/modules/dto/message/message.request'
+import { CreateMessageRequest, GetMessageListRequestQuery } from '@/modules/dto/message/message.request'
+import { GetMessageListResponse } from '@/modules/dto/message/message.response'
 import { MessageRepositoryService } from '@/sevices-repository/message.repository.service'
 import { RoomRepositoryService } from '@/sevices-repository/room.repository.service'
 import { UserRepositoryService } from '@/sevices-repository/user.repository.service'
@@ -71,8 +71,25 @@ export class MessageService {
       }
     }
   }
-  async getMessageList(req: Request<ParamsDictionary, ResponseBody<MessageEntity[]>>) {
+  async getMessageList(
+    req: Request<ParamsDictionary, ResponseBody<GetMessageListResponse>, null, GetMessageListRequestQuery>
+  ) {
     const roomId = req.params.roomId
-    return await _messageRepositoryService.getList(roomId)
+    const query = req.query
+    const limit = query.perPage ? parseInt(query.perPage) : 10 // default limit to 10
+    const page = parseInt(query.page || '1') > 0 ? parseInt(query.page || '1') : 1 // default page to 1
+    const offset = (page - 1) * limit
+    const messageList = await _messageRepositoryService.findAndCountAll(
+      { roomId },
+      { offset, order: ['createdAt'], limit: limit }
+    )
+    const response: GetMessageListResponse = {
+      list: messageList.rows,
+      perPage: limit,
+      currentPage: page,
+      total: messageList.count,
+      totalPages: Math.ceil(messageList.count / limit)
+    }
+    return response
   }
 }
