@@ -38,33 +38,6 @@ export class MessageService {
       const io = getIo()
       io.emit(`${roomId}-message`, message)
       return message
-      // _subscriptionRepositoryService
-      //   .findAll({
-      //     roomId: room.id
-      //   })
-      //   .then((subscriptionList) => {
-      //     for (const subscription of subscriptionList) {
-      //       // console.log(JSON.parse(JSON.stringify(subscription.key)))
-
-      //       const pushSubscription = {
-      //         endpoint: subscription.endpoint,
-      //         keys: JSON.parse(JSON.stringify(subscription.key)) as { p256dh: string; auth: string }
-      //       }
-      //       console.log(pushSubscription)
-
-      //       webpush
-      //         .sendNotification(
-      //           pushSubscription,
-      //           JSON.stringify({ title: `In room ${room.name}`, body: message.content })
-      //         )
-      //         .then(() => {
-      //           console.log('success')
-      //         })
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error)
-      //   })
     } catch (error) {
       if (error instanceof BaseError) {
         throw new BaseError('cannot create message', HttpStatusCode.BAD_REQUEST)
@@ -81,14 +54,14 @@ export class MessageService {
     const offset = (page - 1) * limit
     const messageList = await _messageRepositoryService.findAndCountAll(
       { roomId },
-      { offset, order: ['createdAt'], limit: limit }
+      { offset, order: [['createdAt', 'DESC']], limit: limit }
     )
     const response: GetMessageListResponse = {
       list: messageList.rows,
       perPage: limit,
       currentPage: page,
       total: messageList.count,
-      totalPages: Math.ceil(messageList.count / limit)
+      totalPages: Math.ceil(messageList.count / limit) === 0 ? 1 : Math.ceil(messageList.count / limit)
     }
     return response
   }
