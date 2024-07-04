@@ -1,5 +1,5 @@
 import sequelizeConnection from '@/database/connection'
-import { MessageCreateParams, MessageEntity } from '@/domain/entity/message.entity'
+import { MessageCreateParams, MessageEntity, MessageType } from '@/domain/entity/message.entity'
 import { Model } from 'sequelize'
 import { DataType } from 'sequelize-typescript'
 
@@ -8,6 +8,8 @@ export class Message extends Model<MessageEntity, MessageCreateParams> implement
   public ownerId!: string
   public roomId!: string
   public content!: string
+  public type!: MessageType
+  public media!: string
   public createdAt!: string
   public updatedAt!: string
   public deletedAt!: string
@@ -49,6 +51,15 @@ export const MessageModel = sequelizeConnection.define<Message>(
       validate: {
         min: 1
       }
+    },
+    type: {
+      type: DataType.ENUM('1', '2', '3'),
+      allowNull: false,
+      defaultValue: '1'
+    },
+    media: {
+      type: DataType.STRING,
+      allowNull: true
     },
     createdAt: {
       field: 'created_at',

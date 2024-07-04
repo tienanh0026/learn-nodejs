@@ -1,7 +1,10 @@
 import { ResponseBody } from '@/controllers/types'
+import { Message } from '@/database/models/message/message.model'
+import { MessageDetail, MessageDetailModel } from '@/domain/entity/message.entity'
 import BaseError from '@/libs/error/error.model'
 import { JwtService } from '@/libs/jwt/jwt.service'
 import { getIo } from '@/libs/socket'
+import { getFilePathname } from '@/libs/storage'
 import { CreateMessageRequest, GetMessageListRequestQuery } from '@/modules/dto/message/message.request'
 import { GetMessageListResponse } from '@/modules/dto/message/message.response'
 import { MessageRepositoryService } from '@/sevices-repository/message.repository.service'
@@ -28,20 +31,39 @@ export class MessageService {
       const roomId = req.params.roomId
       const room = await _roomRepositoryService.findOneById(roomId)
       if (!room) throw new BaseError('room not found', HttpStatusCode.NOT_FOUND)
+      let filename: string | undefined = undefined
+      if (req.file) filename = getFilePathname(req.file)
       const newMessage = {
         content: req.body.content,
         id: uid(),
         ownerId: user.id,
-        roomId: room.id
+        roomId: room.id,
+        type: req.body.type || '1',
+        media: filename
       }
       const message = await _messageRepositoryService.create(newMessage)
+      const formatMessage: MessageDetail = {
+        id: message.id,
+        type: message.type,
+        content: message.content,
+        roomId: message.roomId,
+        ownerId: message.ownerId,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+        deletedAt: message.deletedAt,
+        owner: {
+          email: user.email,
+          id: user.id,
+          name: user.name
+        }
+      }
       const io = getIo()
-      io.emit(`${roomId}-message`, message)
+      io.emit(`${roomId}-message`, formatMessage)
       return message
     } catch (error) {
       if (error instanceof BaseError) {
         throw new BaseError('cannot create message', HttpStatusCode.BAD_REQUEST)
-      }
+      } else throw error
     }
   }
   async getMessageList(
@@ -57,7 +79,7 @@ export class MessageService {
       { offset, order: [['createdAt', 'DESC']], limit: limit }
     )
     const response: GetMessageListResponse = {
-      list: messageList.rows,
+      list: messageList.rows as MessageDetailModel<Message>[],
       perPage: limit,
       currentPage: page,
       total: messageList.count,

@@ -7,6 +7,7 @@ import http from 'http'
 import { socketMiddleware } from './libs/socket/middleware'
 import cors from 'cors'
 import { getIo, initSocket } from './libs/socket'
+import path from 'path'
 
 const port = 3002
 
@@ -31,7 +32,10 @@ app.options('*', cors(corsOptions))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
+app.use('/storage', express.static(path.join(__dirname, 'public/storage')))
+app.get('/', (req, res) => {
+  res.send('Welcome to the static file server')
+})
 app.use(route)
 app.use(errorHandler)
 

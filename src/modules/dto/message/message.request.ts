@@ -1,5 +1,15 @@
+import { MessageType } from '@/domain/entity/message.entity'
+
 type CreateMessageRequest = {
   content: string
+  type?: MessageType
+  mediaData?: Express.Multer.File
+  filename?: string
+}
+
+type CreateMediaMessageQuery = {
+  name: string
+  type?: MessageType
 }
 
 type GetMessageListRequestQuery = {
@@ -7,4 +17,4 @@ type GetMessageListRequestQuery = {
   perPage?: string
 }
 
-export type { CreateMessageRequest, GetMessageListRequestQuery }
+export type { CreateMessageRequest, GetMessageListRequestQuery, CreateMediaMessageQuery }
