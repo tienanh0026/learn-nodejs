@@ -8,6 +8,7 @@ import { socketMiddleware } from './libs/socket/middleware'
 import cors from 'cors'
 import { getIo, initSocket } from './libs/socket'
 import path from 'path'
+import './libs/discord-bot'
 
 const port = 3002
 
@@ -18,7 +19,6 @@ initSocket(server)
 
 const io = getIo()
 io.use(socketMiddleware)
-
 const corsOptions = {
   origin: '*', // Or specify your frontend origin instead of '*'
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Include OPTIONS

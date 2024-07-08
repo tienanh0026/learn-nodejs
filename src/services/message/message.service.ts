@@ -3,7 +3,6 @@ import { Message } from '@/database/models/message/message.model'
 import { MessageDetail, MessageDetailModel } from '@/domain/entity/message.entity'
 import BaseError from '@/libs/error/error.model'
 import { JwtService } from '@/libs/jwt/jwt.service'
-import { getIo } from '@/libs/socket'
 import { getFilePathname } from '@/libs/storage'
 import { CreateMessageRequest, GetMessageListRequestQuery } from '@/modules/dto/message/message.request'
 import { GetMessageListResponse } from '@/modules/dto/message/message.response'
@@ -22,7 +21,7 @@ const _userRepositoryService = new UserRepositoryService()
 const _roomRepositoryService = new RoomRepositoryService()
 
 export class MessageService {
-  async createMessage(req: Request<ParamsDictionary, ResponseBody<null>, CreateMessageRequest>) {
+  async createMessage(req: Request<ParamsDictionary, ResponseBody<MessageDetail>, CreateMessageRequest>) {
     try {
       const token = getToken(req)
       const jwtPayload = _jwtService.verifyAccessToken(token)
@@ -47,6 +46,7 @@ export class MessageService {
         type: message.type,
         content: message.content,
         roomId: message.roomId,
+        media: filename,
         ownerId: message.ownerId,
         createdAt: message.createdAt,
         updatedAt: message.updatedAt,
@@ -57,9 +57,7 @@ export class MessageService {
           name: user.name
         }
       }
-      const io = getIo()
-      io.emit(`${roomId}-message`, formatMessage)
-      return message
+      return formatMessage
     } catch (error) {
       if (error instanceof BaseError) {
         throw new BaseError('cannot create message', HttpStatusCode.BAD_REQUEST)

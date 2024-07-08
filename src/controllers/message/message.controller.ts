@@ -6,15 +6,25 @@ import { ResponseBody } from '../types'
 import { CreateMessageRequest, GetMessageListRequestQuery } from '@/modules/dto/message/message.request'
 import { sendPushNotification } from '@/libs/web-push'
 import { GetMessageListResponse } from '@/modules/dto/message/message.response'
+import { getIo } from '@/libs/socket'
+import { MessageDetail } from '@/domain/entity/message.entity'
+import { DiscordNotificationBotService } from '@/services/discord-notification-bot/discord-notification-bot.service'
 const MessageService = new MessageServiceClass()
-
+const DiscordService = new DiscordNotificationBotService()
 export class MessageController {
-  sendMessage: RequestHandler<ParamsDictionary, ResponseBody<null>, CreateMessageRequest> = async (req, res, next) => {
+  sendMessage: RequestHandler<ParamsDictionary, ResponseBody<MessageDetail>, CreateMessageRequest> = async (
+    req,
+    res,
+    next
+  ) => {
     try {
       const message = await MessageService.createMessage(req)
-      const response = formatResponse(null)
+      const response = formatResponse(message)
       res.json(response)
-      if (message) sendPushNotification(message.id, message.ownerId)
+      const io = getIo()
+      io.emit(`${message.roomId}-message`, message)
+      sendPushNotification(message.id, message.ownerId)
+      DiscordService.sendMessage(message)
     } catch (error) {
       next(error)
     }

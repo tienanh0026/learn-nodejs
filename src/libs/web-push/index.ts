@@ -22,8 +22,6 @@ const sendPushNotification = async (messageId: string, ownerId: string) => {
         [Op.ne]: ownerId
       }
     })
-    console.log('ádasdasd', subscriptionList)
-
     for (const subscription of subscriptionList) {
       const pushSubscription = {
         endpoint: subscription.endpoint,
