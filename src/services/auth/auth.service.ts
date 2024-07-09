@@ -1,5 +1,5 @@
 import { LoginRequest, RegisterRequest } from '@/modules/dto/auth/auth.request'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import BaseError from '@/libs/error/error.model'
 import { UserRepositoryService } from '@/sevices-repository/user.repository.service'
 import { JwtPayload, JwtService } from '@/libs/jwt/jwt.service'

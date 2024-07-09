@@ -9,7 +9,7 @@ module.exports = {
   username: configs.default.DB_USERNAME,
   password: configs.default.DB_PASSWORD,
   database: configs.default.DB_DATABASE,
-  host: configs.DB_HOST,
+  host: configs.default.DB_HOST,
   dialect: 'mysql',
   port: 3306
 }

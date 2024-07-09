@@ -1,0 +1,28 @@
+services:
+  nodejs: 
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment:
+      DB_HOST: mysql  # Use 'host.docker.internal' to connect to the host machine
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes: 
+      - nodejs:/nodejs
+    ports:
+      - ${PORT}:3002
+  mysql: 
+    image: mysql:8.0
+    volumes:
+      - db_mysql:/var/lib/mysql
+    environment:
+      MYSQL_USER: ${DB_USER}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  db_mysql: 
+  nodejs:
+

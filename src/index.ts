@@ -9,8 +9,10 @@ import cors from 'cors'
 import { getIo, initSocket } from './libs/socket'
 import path from 'path'
 import './libs/discord-bot'
+import dotenv from 'dotenv'
+dotenv.config()
 
-const port = 3002
+const port = process.env.PORT
 
 const app = express()
 const server = http.createServer(app)
@@ -32,7 +34,10 @@ app.options('*', cors(corsOptions))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/storage', express.static(path.join(__dirname, 'public/storage')))
+const dirname = process.env.NODE_ENV === 'production' ? path.join(__dirname, '../', '/src') : __dirname
+
+app.use('/storage', express.static(path.join(dirname, 'public/storage')))
+
 app.get('/', (req, res) => {
   res.send('Welcome to the static file server')
 })

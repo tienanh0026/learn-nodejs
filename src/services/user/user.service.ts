@@ -1,7 +1,7 @@
 import BaseError from '@/libs/error/error.model'
 import { UserReq } from '@/modules/dto/user/user.request'
 import HttpStatusCode from 'http-status-codes'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { UserRepositoryService } from '@/sevices-repository/user.repository.service'
 import { UserEntityDefault } from '@/domain/entity/user.entity'
 import { User } from '@/database/models/user/user.model'

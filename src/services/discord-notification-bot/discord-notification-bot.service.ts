@@ -21,7 +21,6 @@ const _discordNotiBotRepository = new DiscordNotificationBotRepositoryService()
 export class DiscordNotificationBotService {
   async sendMessage(message: MessageDetail) {
     const subcriptionList = await _discordNotiBotRepository.findAllSubscription()
-    console.log(subcriptionList)
 
     if (!subcriptionList || subcriptionList.length === 0) return
     subcriptionList?.forEach((subscription) => {

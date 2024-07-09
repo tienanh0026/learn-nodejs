@@ -9,6 +9,7 @@ function sanitizeFilename(filename: string) {
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let uploadPath = path.join('src', 'public', 'storage')
+    console.log('uploadPath', uploadPath)
 
     if (file.mimetype.startsWith('image')) {
       uploadPath += '/image'

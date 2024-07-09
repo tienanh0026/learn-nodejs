@@ -7,4 +7,13 @@ const sequelizeConnection: Sequelize = new Sequelize(dbConfig.DB_DATABASE, dbCon
   port: 3306
 })
 
+console.log({
+  username: dbConfig.DB_USERNAME,
+  password: dbConfig.DB_PASSWORD,
+  database: dbConfig.DB_DATABASE,
+  host: dbConfig.DB_HOST,
+  dialect: 'mysql',
+  port: 3306
+})
+
 export default sequelizeConnection

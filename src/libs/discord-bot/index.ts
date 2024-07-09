@@ -19,7 +19,7 @@ discordClient.on('ready', (cli) => {
     status: 'online',
     activities: [{ name: 'Server administration bot', type: 4 }]
   })
-  console.log(`${cli.user.displayName} is online!`)
+  console.log(`${cli.user.displayName} is online2!`)
 })
 
 discordClient.on('guildCreate', (guild) => {
