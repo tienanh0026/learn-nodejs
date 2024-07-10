@@ -1,0 +1,8 @@
+FROM node:20
+WORKDIR /nodejs
+
+# ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/bin/wait-for-it
+# RUN chmod +x /usr/bin/wait-for-it
+
+# CMD ["sh", "-c", "wait-for-it mysql:3306 -- npm install && npm run build && npm run start"]
+CMD ["sh", "-c", "npm install && npm run build && npm run start"]
