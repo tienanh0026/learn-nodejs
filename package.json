@@ -13,7 +13,8 @@
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "db:create": "sequelize db:create",
-    "db:migrate-up": "sequelize db:migrate",
+    "db:migrate-up:dev": "sequelize db:migrate",
+    "db:migrate-up-docker:prod": "docker exec -it $(docker ps | grep 'nodejs-code' | awk '{print $1}'  ) sh -c 'npm run db:migrate-up'",
     "db:migrate-down": "sequelize db:migrate:undo"
   },
   "author": "",

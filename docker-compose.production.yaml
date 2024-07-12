@@ -1,5 +1,5 @@
 services:
-  nodejs:
+  nodejs-code:
     build: 
       dockerfile: docker/Dockerfile.production
       context: .
