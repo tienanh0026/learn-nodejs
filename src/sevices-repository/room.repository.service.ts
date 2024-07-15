@@ -2,7 +2,7 @@ import { RoomModel } from '@/database/models/room/room.model'
 import { UserModel } from '@/database/models/user/user.model'
 import { RoomCreateParams, RoomDetailEntity, RoomEntity, RoomUpdateEntity } from '@/domain/entity/room.entity'
 import { RoomRepository } from '@/repository/room.repository'
-import { Sequelize } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 
 export class RoomRepositoryService implements RoomRepository {
   create(room: RoomCreateParams): Promise<RoomEntity> {
@@ -23,6 +23,18 @@ export class RoomRepositoryService implements RoomRepository {
   }
   findAll(): Promise<RoomEntity[]> {
     return RoomModel.findAll()
+  }
+  findAllAvailableRoom(roomIdArr: string[]): Promise<RoomEntity[]> {
+    return RoomModel.findAll({
+      where: {
+        [Op.or]: [
+          { type: 1 },
+          {
+            [Op.and]: [{ type: { [Op.ne]: 1 } }, { id: { [Op.in]: roomIdArr } }]
+          }
+        ]
+      }
+    })
   }
   async findOneById(id: string): Promise<RoomDetailEntity> {
     const room = await RoomModel.findOne({

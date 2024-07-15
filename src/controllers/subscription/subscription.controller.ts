@@ -6,13 +6,12 @@ import { RoomSubcribeNotiResponse } from '@/modules/dto/subscription/subscriptio
 import { SubscriptionService } from '@/services/subscription/subscription.service'
 import { formatResponse } from '@/common/response/response'
 
-const _subcriptionService = new SubscriptionService()
-
 export class SubscriptionController {
+  constructor(private _subcriptionService: SubscriptionService) {}
   subscribeRoomNoti: RequestHandler<ParamsDictionary, ResponseBody<RoomSubcribeNotiResponse>, RoomSubcribeNotiRequest> =
     async (req, res, next) => {
       try {
-        const newSubscription = await _subcriptionService.subscribeRoomNoti(req)
+        const newSubscription = await this._subcriptionService.subscribeRoomNoti(req)
         const response = formatResponse(newSubscription)
         res.json(response)
       } catch (error) {
@@ -21,7 +20,7 @@ export class SubscriptionController {
     }
   unsubscribeRoomNoti: RequestHandler<ParamsDictionary> = async (req, res, next) => {
     try {
-      await _subcriptionService.unsubscribeRoomNoti(req)
+      await this._subcriptionService.unsubscribeRoomNoti(req)
       const response = formatResponse('unsubscribe success')
       res.json(response)
     } catch (error) {

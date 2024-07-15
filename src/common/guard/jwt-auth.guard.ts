@@ -6,18 +6,18 @@ import HttpStatusCode from 'http-status-codes'
 import { TokenExpiredError } from 'jsonwebtoken'
 import { getToken } from '@/utilities/jwt'
 
-const jwtService_ = new JwtService()
 const authRepository_ = new AuthRepositoryService()
 export interface CustomRequest extends Request {
   token: JwtPayload
 }
 
 export class JwtAuthGuard {
+  constructor(private _jwtService: JwtService) {}
   async checkToken(req: Request, res: Response, next: NextFunction) {
     const token = getToken(req)
     try {
       if (!token) throw new Error()
-      const jwt = jwtService_.verifyAccessToken(token)
+      const jwt = this._jwtService.verifyAccessToken(token)
       if (jwt) {
         ;(req as CustomRequest).token = jwt
         next()

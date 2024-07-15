@@ -1,6 +1,5 @@
 import { RoomCreateReq, RoomEditReq } from '@/modules/dto/room/room.request'
 import { RoomService } from '@/services/room/room.service'
-import { getToken } from '@/utilities/jwt'
 import { RequestHandler } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ResponseBody } from '../types'
@@ -15,11 +14,7 @@ export class RoomController {
     next
   ) => {
     try {
-      const token = getToken(req)
-      const room = await this._roomService.createRoom({
-        name: req.body.name,
-        token: token
-      })
+      const room = await this._roomService.createRoom(req)
       const response = formatResponse(room)
       res.json(response)
     } catch (error) {
@@ -46,9 +41,9 @@ export class RoomController {
       next(error)
     }
   }
-  getRoomList: RequestHandler<ParamsDictionary, ResponseBody<RoomGetListResponse>> = async (_req, res, next) => {
+  getRoomList: RequestHandler<ParamsDictionary, ResponseBody<RoomGetListResponse>> = async (req, res, next) => {
     try {
-      const roomList = await this._roomService.getRoomList()
+      const roomList = await this._roomService.getRoomList(req)
       const response = formatResponse(roomList)
       res.json(response)
     } catch (error) {

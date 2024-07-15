@@ -1,34 +1,37 @@
 import BaseError from '@/libs/error/error.model'
 import { JwtService } from '@/libs/jwt/jwt.service'
-import { RoomEditReq } from '@/modules/dto/room/room.request'
+import { RoomCreateReq, RoomEditReq } from '@/modules/dto/room/room.request'
 import { RoomRepositoryService } from '@/sevices-repository/room.repository.service'
 import { Request } from 'express'
 import HttpStatusCode from 'http-status-codes'
 import { uid } from 'uid'
 import { ParamsDictionary } from 'express-serve-static-core'
-import { getToken } from '@/utilities/jwt'
-import { UserService } from '../user/user.service'
 import { getIo } from '@/libs/socket'
-type RoomCreateReq = {
-  name: string
-  token: string
-}
+import { RoomUserRepositoryService } from '@/sevices-repository/roomUser.repository.service'
+import { ResponseBody } from '@/controllers/types'
+import { RoomCreateResponse, RoomGetListResponse } from '@/modules/dto/room/room.response'
 
-const _roomRepository = new RoomRepositoryService()
-
-const _userService = new UserService()
-
-const _jwtService = new JwtService()
 export class RoomService {
-  async createRoom(params: RoomCreateReq) {
+  constructor(
+    private _roomRepository: RoomRepositoryService,
+    private _jwtService: JwtService,
+    private _roomUserRepository: RoomUserRepositoryService
+  ) {}
+  async createRoom(req: Request<ParamsDictionary, ResponseBody<RoomCreateResponse>, RoomCreateReq>) {
     try {
-      const jwtPayload = _jwtService.verifyAccessToken(params.token)
-      const createRoomParams = {
-        name: params.name,
-        ownerId: jwtPayload.id,
-        id: uid()
-      }
-      const newRoom = await _roomRepository.create(createRoomParams)
+      const user = await this._jwtService.getUserInfo(req)
+      const newRoom = await this._roomRepository.create({
+        name: req.body.name,
+        ownerId: user.id,
+        id: uid(),
+        type: req.body.type || '1'
+      })
+      await this._roomUserRepository.create({
+        id: uid(),
+        role: 'admin',
+        roomId: newRoom.id,
+        userId: user.id
+      })
       const io = getIo()
       io.emit('room-list', newRoom)
       return newRoom
@@ -37,15 +40,13 @@ export class RoomService {
     }
   }
   async getRoom(roomId: string) {
-    return await _roomRepository.findOneById(roomId)
+    return await this._roomRepository.findOneById(roomId)
   }
   async editRoom(req: Request<ParamsDictionary, unknown, RoomEditReq>) {
+    const user = await this._jwtService.getUserInfo(req)
     const roomId = req.params.roomId
-    const token = getToken(req)
     const editBody = req.body
-    const jwtPayload = _jwtService.verifyAccessToken(token)
-    const user = await _userService.findOneById(jwtPayload.id)
-    const room = await _roomRepository.findOneById(roomId)
+    const room = await this._roomRepository.findOneById(roomId)
     if (room.ownerId !== user.id) {
       throw new BaseError('not owner', HttpStatusCode.UNAUTHORIZED)
     }
@@ -54,9 +55,14 @@ export class RoomService {
       id: roomId,
       updatedAt: new Date().toISOString()
     }
-    return _roomRepository.update(roomParam)
+    return this._roomRepository.update(roomParam)
   }
-  async getRoomList() {
-    return await _roomRepository.findAll()
+  async getRoomList(req: Request<ParamsDictionary, ResponseBody<RoomGetListResponse>>) {
+    const user = await this._jwtService.getUserInfo(req)
+    const roomUser = await this._roomUserRepository.findById({
+      userId: user.id
+    })
+    const roomIdArr = roomUser.map((roomUser) => roomUser.roomId)
+    return await this._roomRepository.findAllAvailableRoom(roomIdArr)
   }
 }

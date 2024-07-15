@@ -8,15 +8,16 @@ import { uid } from 'uid'
 import HttpStatusCode from 'http-status-codes'
 import { MailService } from '@/libs/mail/mail.service'
 
-const userRepository_ = new UserRepositoryService()
-const authRepository_ = new AuthRepositoryService()
-
-const jwtService_ = new JwtService()
-const mailService_ = new MailService()
 export class AuthService {
+  constructor(
+    private _userRepository: UserRepositoryService,
+    private _authRepository: AuthRepositoryService,
+    private _jwtService: JwtService,
+    private _mailService: MailService
+  ) {}
   async login(user: LoginRequest) {
     try {
-      const existedUser = await userRepository_.findOneByEmail(user.email)
+      const existedUser = await this._userRepository.findOneByEmail(user.email)
       if (!existedUser) throw new BaseError('Email not found', HttpStatusCode.CONFLICT)
       if (!bcrypt.compareSync(user.password, existedUser.password)) {
         throw new BaseError('sai pass', HttpStatusCode.CONFLICT)
@@ -25,9 +26,9 @@ export class AuthService {
         id: existedUser.id,
         email: existedUser.email
       }
-      const accessToken = jwtService_.generateToken(payload)
-      const refreshToken = jwtService_.generateRefreshToken(payload)
-      await authRepository_.saveToken({ id: uid(), token: accessToken, userId: existedUser.id })
+      const accessToken = this._jwtService.generateToken(payload)
+      const refreshToken = this._jwtService.generateRefreshToken(payload)
+      await this._authRepository.saveToken({ id: uid(), token: accessToken, userId: existedUser.id })
       return {
         accessToken,
         refreshToken
@@ -40,27 +41,27 @@ export class AuthService {
     }
   }
   async currentAuth(email: string) {
-    const extstedUser = await userRepository_.findByEmail(email)
+    const extstedUser = await this._userRepository.findByEmail(email)
     if (!extstedUser) throw new BaseError('User not found', HttpStatusCode.NOT_FOUND)
     return extstedUser
   }
   async register(user: RegisterRequest) {
-    const existedUser = await userRepository_.findByEmail(user.email)
+    const existedUser = await this._userRepository.findByEmail(user.email)
     if (existedUser) throw new BaseError('Existed email', HttpStatusCode.CONFLICT)
     console.log('user', user)
     user.password = await bcrypt.hash(user.password, 10)
-    const newUser = await userRepository_.create(user)
+    const newUser = await this._userRepository.create(user)
     const userPayload: JwtPayload = {
       email: newUser.email,
       id: newUser.id
     }
-    const token = jwtService_.generateToken(userPayload)
-    await authRepository_.saveToken({
+    const token = this._jwtService.generateToken(userPayload)
+    await this._authRepository.saveToken({
       id: uid(),
       token: token,
       userId: newUser.id
     })
-    await mailService_.sendRegisterSuccessfull(newUser.email, newUser)
+    await this._mailService.sendRegisterSuccessfull(newUser.email, newUser)
     return {
       accessToken: token,
       user: newUser
@@ -70,14 +71,14 @@ export class AuthService {
     try {
       console.log('token', token)
 
-      const refreshPayload = jwtService_.verifyRefreshToken(token)
+      const refreshPayload = this._jwtService.verifyRefreshToken(token)
       console.log(refreshPayload)
       const tokenPayload = {
         id: refreshPayload.id,
         email: refreshPayload.email
       }
-      const accessToken = jwtService_.generateToken(tokenPayload)
-      await authRepository_.saveToken({
+      const accessToken = this._jwtService.generateToken(tokenPayload)
+      await this._authRepository.saveToken({
         id: uid(),
         token: accessToken,
         userId: tokenPayload.id

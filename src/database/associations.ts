@@ -3,6 +3,7 @@ import { UserModel } from '@/database/models/user/user.model'
 import { RoomModel } from './models/room/room.model'
 import { MessageModel } from './models/message/message.model'
 import { SubscriptionModel } from './models/subscription/subscription.model'
+import { RoomUserModel } from './models/room-user/room-user.model'
 
 UserModel.hasMany(AuthModel, { foreignKey: 'userId', sourceKey: 'id' })
 AuthModel.belongsTo(UserModel, { foreignKey: 'userId', targetKey: 'id' })
@@ -31,4 +32,16 @@ SubscriptionModel.belongsTo(UserModel, {
 
 SubscriptionModel.belongsTo(RoomModel, {
   foreignKey: 'id'
+})
+
+RoomUserModel.hasOne(UserModel, {
+  foreignKey: 'id',
+  sourceKey: 'userId',
+  as: 'user'
+})
+
+RoomUserModel.hasOne(RoomModel, {
+  foreignKey: 'id',
+  sourceKey: 'userId',
+  as: 'room'
 })

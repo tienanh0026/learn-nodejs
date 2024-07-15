@@ -8,28 +8,34 @@ import { CreateMessageRequest, GetMessageListRequestQuery } from '@/modules/dto/
 import { GetMessageListResponse } from '@/modules/dto/message/message.response'
 import { MessageRepositoryService } from '@/sevices-repository/message.repository.service'
 import { RoomRepositoryService } from '@/sevices-repository/room.repository.service'
-import { UserRepositoryService } from '@/sevices-repository/user.repository.service'
-import { getToken } from '@/utilities/jwt'
+import { RoomUserRepositoryService } from '@/sevices-repository/roomUser.repository.service'
 import { Request } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import HttpStatusCode from 'http-status-codes'
 import { uid } from 'uid'
 
-const _messageRepositoryService = new MessageRepositoryService()
-const _jwtService = new JwtService()
-const _userRepositoryService = new UserRepositoryService()
-const _roomRepositoryService = new RoomRepositoryService()
-
 export class MessageService {
+  constructor(
+    private _messageRepositoryService: MessageRepositoryService,
+    private _jwtService: JwtService,
+    private _roomRepositoryService: RoomRepositoryService,
+    private _roomUserRepositoryService: RoomUserRepositoryService
+  ) {}
   async createMessage(req: Request<ParamsDictionary, ResponseBody<MessageDetail>, CreateMessageRequest>) {
     try {
-      const token = getToken(req)
-      const jwtPayload = _jwtService.verifyAccessToken(token)
-      const user = await _userRepositoryService.findByEmail(jwtPayload.email)
+      const user = await this._jwtService.getUserInfo(req)
       if (!user) throw new BaseError('user not found', HttpStatusCode.NOT_FOUND)
       const roomId = req.params.roomId
-      const room = await _roomRepositoryService.findOneById(roomId)
+      const room = await this._roomRepositoryService.findOneById(roomId)
       if (!room) throw new BaseError('room not found', HttpStatusCode.NOT_FOUND)
+      if (room.type === '2') {
+        const roomUser = await this._roomUserRepositoryService.findOne({
+          roomId,
+          userId: user.id
+        })
+        if (!roomUser)
+          throw new BaseError("You don't have permission to send message in this room", HttpStatusCode.FORBIDDEN)
+      }
       let filename: string | undefined = undefined
       if (req.file) filename = getFilePathname(req.file)
       const newMessage = {
@@ -40,7 +46,7 @@ export class MessageService {
         type: req.body.type || '1',
         media: filename
       }
-      const message = await _messageRepositoryService.create(newMessage)
+      const message = await this._messageRepositoryService.create(newMessage)
       const formatMessage: MessageDetail = {
         id: message.id,
         type: message.type,
@@ -60,8 +66,8 @@ export class MessageService {
       return formatMessage
     } catch (error) {
       if (error instanceof BaseError) {
-        throw new BaseError('cannot create message', HttpStatusCode.BAD_REQUEST)
-      } else throw error
+        throw error
+      } else throw new BaseError('cannot create message', HttpStatusCode.FORBIDDEN)
     }
   }
   async getMessageList(
@@ -72,7 +78,7 @@ export class MessageService {
     const limit = query.perPage ? parseInt(query.perPage) : 10 // default limit to 10
     const page = parseInt(query.page || '1') > 0 ? parseInt(query.page || '1') : 1 // default page to 1
     const offset = (page - 1) * limit
-    const messageList = await _messageRepositoryService.findAndCountAll(
+    const messageList = await this._messageRepositoryService.findAndCountAll(
       { roomId },
       { offset, order: [['createdAt', 'DESC']], limit: limit }
     )

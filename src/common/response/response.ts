@@ -1,8 +1,8 @@
 import { ResponseBody } from '@/controllers/types'
 
-function formatResponse<T>(data: T) {
+function formatResponse<T>(data: T, message?: string) {
   const response: ResponseBody<T> = {
-    message: 'success',
+    message: message || 'success',
     data: data
   }
   return response

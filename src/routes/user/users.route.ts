@@ -3,8 +3,10 @@ import { UserService as UserServiceClass } from '@/services/user/user.service'
 import express from 'express'
 
 const userRoute = express()
+
 const UserService = new UserServiceClass()
 const UserController = new UserControllerClass(UserService)
+
 userRoute
   .get('/users', UserController.findAll)
   .post('/user/create', UserController.create)

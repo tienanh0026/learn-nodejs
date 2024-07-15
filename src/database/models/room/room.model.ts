@@ -1,5 +1,5 @@
 import sequelizeConnection from '@/database/connection'
-import { RoomCreateParams, RoomEntity } from '@/domain/entity/room.entity'
+import { RoomCreateParams, RoomEntity, RoomType } from '@/domain/entity/room.entity'
 import { Model } from 'sequelize'
 import { DataType } from 'sequelize-typescript'
 
@@ -8,6 +8,7 @@ export class Room extends Model<RoomEntity, RoomCreateParams> implements RoomEnt
   public name!: string
   public ownerId!: string
   public image!: string
+  public type!: RoomType
   public createdAt!: string
   public updatedAt!: string
   public deletedAt!: string
@@ -42,6 +43,11 @@ export const RoomModel = sequelizeConnection.define<Room>(
       field: 'image',
       type: DataType.STRING,
       allowNull: true
+    },
+    type: {
+      type: DataType.ENUM('1', '2'),
+      allowNull: false,
+      defaultValue: '1'
     },
     createdAt: {
       field: 'created_at',
