@@ -5,6 +5,7 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { ResponseBody } from '../types'
 import { formatResponse } from '@/common/response/response'
 import { RoomCreateResponse, RoomDetailResponse, RoomGetListResponse } from '@/modules/dto/room/room.response'
+import { getIo } from '@/libs/socket'
 
 export class RoomController {
   constructor(private _roomService: RoomService) {}
@@ -26,7 +27,8 @@ export class RoomController {
       const updatedRoom = await this._roomService.editRoom(req)
       const response = formatResponse(updatedRoom)
       res.json(response)
-      //
+      const io = getIo()
+      io.emit('room-list', updatedRoom)
     } catch (error) {
       return next(error)
     }

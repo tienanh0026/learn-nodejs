@@ -33,7 +33,8 @@ export class RoomRepositoryService implements RoomRepository {
             [Op.and]: [{ type: { [Op.ne]: 1 } }, { id: { [Op.in]: roomIdArr } }]
           }
         ]
-      }
+      },
+      order: [['createdAt', 'DESC']]
     })
   }
   async findOneById(id: string): Promise<RoomDetailEntity> {

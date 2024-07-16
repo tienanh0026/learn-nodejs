@@ -10,6 +10,8 @@ import { getIo } from '@/libs/socket'
 import { RoomUserRepositoryService } from '@/sevices-repository/roomUser.repository.service'
 import { ResponseBody } from '@/controllers/types'
 import { RoomCreateResponse, RoomGetListResponse } from '@/modules/dto/room/room.response'
+import { getFilePathname } from '@/libs/storage'
+import { RoomCreateParams } from '@/domain/entity/room.entity'
 
 export class RoomService {
   constructor(
@@ -20,21 +22,26 @@ export class RoomService {
   async createRoom(req: Request<ParamsDictionary, ResponseBody<RoomCreateResponse>, RoomCreateReq>) {
     try {
       const user = await this._jwtService.getUserInfo(req)
-      const newRoom = await this._roomRepository.create({
+      const newRoom: RoomCreateParams = {
         name: req.body.name,
         ownerId: user.id,
         id: uid(),
         type: req.body.type || '1'
-      })
+      }
+      if (req.file) {
+        const filename = getFilePathname(req.file)
+        newRoom.image = filename
+      }
+      const room = await this._roomRepository.create(newRoom)
       await this._roomUserRepository.create({
         id: uid(),
         role: 'admin',
-        roomId: newRoom.id,
+        roomId: room.id,
         userId: user.id
       })
       const io = getIo()
-      io.emit('room-list', newRoom)
-      return newRoom
+      io.emit('room-list', room)
+      return room
     } catch (error) {
       throw new BaseError('co loi xay ra', HttpStatusCode.SERVICE_UNAVAILABLE)
     }
@@ -45,14 +52,17 @@ export class RoomService {
   async editRoom(req: Request<ParamsDictionary, unknown, RoomEditReq>) {
     const user = await this._jwtService.getUserInfo(req)
     const roomId = req.params.roomId
-    const editBody = req.body
     const room = await this._roomRepository.findOneById(roomId)
     if (room.ownerId !== user.id) {
-      throw new BaseError('not owner', HttpStatusCode.UNAUTHORIZED)
+      throw new BaseError('not owner', HttpStatusCode.BAD_REQUEST)
     }
+    if (req.file) {
+      const filename = getFilePathname(req.file)
+      room.image = filename
+    }
+    if (req.body.name) room.name = req.body.name
     const roomParam = {
-      ...editBody,
-      id: roomId,
+      ...room,
       updatedAt: new Date().toISOString()
     }
     return this._roomRepository.update(roomParam)

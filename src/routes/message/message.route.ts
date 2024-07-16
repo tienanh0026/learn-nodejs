@@ -21,7 +21,7 @@ const messageService = new MessageService(
   new RoomUserRepositoryService()
 )
 const discordNotificationBotService = new DiscordNotificationBotService(new DiscordNotificationBotRepositoryService())
-const JwtAuthGuard = new JwtAuthGuardClass(jwtService)
+const JwtAuthGuard = new JwtAuthGuardClass()
 const MessageController = new MessageControllerClass(messageService, discordNotificationBotService)
 
 messageRoute

@@ -17,7 +17,7 @@ const authService = new AuthService(
   new MailService()
 )
 const AuthController = new AuthControllerClass(authService)
-const JwtAuthGuard = new JwtAuthGuardClass(jwtService)
+const JwtAuthGuard = new JwtAuthGuardClass()
 
 authRoute
   .post('/login', AuthController.login)

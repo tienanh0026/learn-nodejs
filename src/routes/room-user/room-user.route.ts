@@ -9,7 +9,7 @@ import { UserRepositoryService } from '@/sevices-repository/user.repository.serv
 const roomUserRoute = express()
 
 const jwtService = new JwtService(new UserRepositoryService())
-const jwtAuthGuard = new JwtAuthGuard(jwtService)
+const jwtAuthGuard = new JwtAuthGuard()
 const roomUserServiceClass = new RoomUserServiceClass(new RoomUserRepositoryService(), jwtService)
 const roomUserController = new RoomUserController(roomUserServiceClass)
 

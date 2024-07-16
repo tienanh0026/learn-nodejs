@@ -5,19 +5,21 @@ import { NextFunction, Request, Response } from 'express'
 import HttpStatusCode from 'http-status-codes'
 import { TokenExpiredError } from 'jsonwebtoken'
 import { getToken } from '@/utilities/jwt'
+import { UserRepositoryService } from '@/sevices-repository/user.repository.service'
 
 const authRepository_ = new AuthRepositoryService()
 export interface CustomRequest extends Request {
   token: JwtPayload
 }
 
+const jwtService = new JwtService(new UserRepositoryService())
+
 export class JwtAuthGuard {
-  constructor(private _jwtService: JwtService) {}
   async checkToken(req: Request, res: Response, next: NextFunction) {
     const token = getToken(req)
     try {
       if (!token) throw new Error()
-      const jwt = this._jwtService.verifyAccessToken(token)
+      const jwt = jwtService.verifyAccessToken(token)
       if (jwt) {
         ;(req as CustomRequest).token = jwt
         next()

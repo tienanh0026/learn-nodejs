@@ -10,7 +10,7 @@ const subscriptionRoute = express()
 const jwtService = new JwtService(new UserRepositoryService())
 const subscriptionService = new SubscriptionService(jwtService)
 const SubscriptionController = new SubscriptionControllerClass(subscriptionService)
-const JwtAuthGuard = new JwtAuthGuardClass(jwtService)
+const JwtAuthGuard = new JwtAuthGuardClass()
 
 subscriptionRoute
   .post('/subscribe/room/:roomId', JwtAuthGuard.checkToken, SubscriptionController.subscribeRoomNoti)
