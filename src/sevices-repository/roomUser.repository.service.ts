@@ -3,8 +3,10 @@ import { RoomUserCreateParams, RoomUserEntity } from '@/domain/entity/roomUser.e
 import { RoomUserRepository } from '@/repository/roomUser.repository'
 
 export class RoomUserRepositoryService implements RoomUserRepository {
-  create(data: RoomUserCreateParams): Promise<RoomUserEntity> {
-    return RoomUserModel.create(data)
+  create(data: RoomUserCreateParams): Promise<void> {
+    return RoomUserModel.create(data, {
+      ignoreDuplicates: true
+    })
   }
   findOne(data: Partial<RoomUserEntity>) {
     return RoomUserModel.findOne({

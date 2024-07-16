@@ -1,8 +1,10 @@
 import { RoomUserRole } from '@/domain/entity/roomUser.entity'
 
 type AddUserRequestBody = {
-  userId: string
-  role?: RoomUserRole
+  user: {
+    id: string
+    role: RoomUserRole
+  }[]
 }
 
 type RemoveUserRequestBody = {

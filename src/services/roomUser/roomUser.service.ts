@@ -38,12 +38,14 @@ export class RoomUserServiceClass {
   }
   async create(req: Request<AddUserRequestParams, ResponseBody<null>, AddUserRequestBody>) {
     const { roomId } = await this.checkRole(req)
-    await this._roomUserRepository.create({
-      id: uid(),
-      role: req.body.role || 'user',
-      roomId,
-      userId: req.body.userId
-    })
+    for (const user of req.body.user) {
+      await this._roomUserRepository.create({
+        id: uid(),
+        role: user.role || 'user',
+        roomId,
+        userId: user.id
+      })
+    }
     return
   }
   async removeUser(req: Request<AddUserRequestParams, ResponseBody<null>, RemoveUserRequestBody>) {

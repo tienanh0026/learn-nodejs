@@ -57,6 +57,12 @@ export const RoomUserModel = sequelizeConnection.define<RoomUser>(
     }
   },
   {
-    tableName: 'room-user'
+    tableName: 'room-user',
+    indexes: [
+      {
+        unique: true,
+        fields: ['user_id', 'room_id']
+      }
+    ]
   }
 )
