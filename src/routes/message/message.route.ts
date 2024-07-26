@@ -10,7 +10,7 @@ import { UserRepositoryService } from '@/sevices-repository/user.repository.serv
 import { RoomRepositoryService } from '@/sevices-repository/room.repository.service'
 import { DiscordNotificationBotRepositoryService } from '@/sevices-repository/discord-notification-bot.repository.service'
 import { RoomUserRepositoryService } from '@/sevices-repository/roomUser.repository.service'
-import { createMessageValidator } from '@/modules/validation/message'
+import { createMessageValidator, getMessageListValidator } from '@/modules/validation/message'
 import { validate } from '@/modules/validation'
 
 const messageRoute = Router()
@@ -30,10 +30,15 @@ messageRoute
   .post(
     '/:roomId/message/',
     JwtAuthGuard.checkToken,
-    validate(createMessageValidator),
     upload.single('file'),
+    validate(createMessageValidator),
     MessageController.sendMessage
   )
-  .get('/:roomId/message/list', JwtAuthGuard.checkToken, MessageController.getMessageList)
+  .get(
+    '/:roomId/message/list',
+    JwtAuthGuard.checkToken,
+    validate(getMessageListValidator),
+    MessageController.getMessageList
+  )
 
 export default messageRoute

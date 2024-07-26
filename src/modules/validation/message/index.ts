@@ -1,18 +1,25 @@
-import { body, ContextRunner } from 'express-validator'
-import { buffer } from 'stream/consumers'
+import { body, ContextRunner, query } from 'express-validator'
 
 const createMessageValidator: ContextRunner[] = [
   body('content')
-    // .notEmpty()
     .custom((value, { req }) => {
-      try {
-        const a = Buffer.concat(req.body).toString()
-        console.log('ádasdas', req)
-      } catch (error) {
-        console.log(error)
-      }
-      return false
+      if (!value && !req.file) return false
+      else return true
     })
+    .withMessage('Message content is required')
 ]
 
-export { createMessageValidator }
+const getMessageListValidator = [
+  query('perPage').custom((value) => {
+    if (!value) return true
+    if (Number(value) === 0 || !!Number(value)) return true
+    else return false
+  }),
+  query('page').custom((value) => {
+    if (!value) return true
+    if (Number(value) === 0 || !!Number(value)) return true
+    else return false
+  })
+]
+
+export { createMessageValidator, getMessageListValidator }
