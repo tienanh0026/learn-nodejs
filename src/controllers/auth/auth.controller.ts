@@ -5,10 +5,11 @@ import { ResponseBody } from '../types'
 import { AuthService } from '@/services/auth/auth.service'
 import { CustomRequest } from '@/common/guard/jwt-auth.guard'
 import { formatResponse } from '@/common/response/response'
+import { ParamsDictionary } from 'express-serve-static-core'
 
 export class AuthController {
   constructor(private _authService: AuthService) {}
-  login: RequestHandler<unknown, ResponseBody<LoginResponse>, LoginRequest> = async (req, res, next) => {
+  login: RequestHandler<ParamsDictionary, ResponseBody<LoginResponse>, LoginRequest> = async (req, res, next) => {
     try {
       const loginUser = req.body
       const loginResponse = await this._authService.login(loginUser)
@@ -18,7 +19,7 @@ export class AuthController {
       return next(error)
     }
   }
-  currentAuth: RequestHandler<unknown, ResponseBody<CurrentAuthResponse>> = async (req, res, next) => {
+  currentAuth: RequestHandler<ParamsDictionary, ResponseBody<CurrentAuthResponse>> = async (req, res, next) => {
     try {
       const token = (req as CustomRequest).token
       const user = await this._authService.currentAuth(token.email)
@@ -28,7 +29,11 @@ export class AuthController {
       return next(error)
     }
   }
-  register: RequestHandler<unknown, ResponseBody<RegisterResponse>, RegisterRequest> = async (req, res, next) => {
+  register: RequestHandler<ParamsDictionary, ResponseBody<RegisterResponse>, RegisterRequest> = async (
+    req,
+    res,
+    next
+  ) => {
     try {
       const user = req.body
       const registerResponse = await this._authService.register(user)
@@ -38,7 +43,7 @@ export class AuthController {
       next(error)
     }
   }
-  refresh: RequestHandler<unknown, ResponseBody<RefreshResponse>, RefreshRequest> = async (req, res, next) => {
+  refresh: RequestHandler<ParamsDictionary, ResponseBody<RefreshResponse>, RefreshRequest> = async (req, res, next) => {
     try {
       const { refreshToken } = req.body
       const refreshReponse = await this._authService.refresh(refreshToken)

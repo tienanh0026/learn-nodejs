@@ -9,7 +9,7 @@ const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFun
     res.statusCode = error.httpCode
     const response: ResponseBody<undefined> = {
       message: error.message,
-      data: undefined
+      data: error.data
     }
     res.end(JSON.stringify(response))
   } else {
