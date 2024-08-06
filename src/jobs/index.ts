@@ -1,3 +1,9 @@
-import { validateSubscriptions } from '@/libs/web-push/'
+// import { validateSubscriptions } from '@/libs/web-push/'
+import cron from 'node-cron'
 
-validateSubscriptions()
+cron.schedule('* * * * *', () => {
+  console.log('Schedule at ', new Date().toLocaleString())
+})
+
+export default cron
+// validateSubscriptions()
