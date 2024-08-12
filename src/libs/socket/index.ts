@@ -3,8 +3,14 @@ import { Server as SocketIOServer } from 'socket.io'
 import WebSocket from 'ws'
 import fs from 'fs'
 import path from 'path'
+import { User } from '@/database/models/user/user.model'
 
 let io: SocketIOServer
+
+type TypingMessage = {
+  user: User
+  roomId: string
+}
 
 export const initSocket = (server: HttpServer): void => {
   io = new SocketIOServer(server, {
@@ -13,12 +19,23 @@ export const initSocket = (server: HttpServer): void => {
       methods: ['GET', 'POST']
     }
   })
-  console.log('1231231')
 
   io.on('connection', (socket) => {
     console.log('a user connected')
     socket.on('disconnect', () => {
       console.log('user disconnected')
+    })
+    socket.on('on-typing-message', (data: TypingMessage) => {
+      socket.broadcast.emit(`${data.roomId}-typing`, {
+        isTyping: true,
+        ...data
+      })
+    })
+    socket.on('on-stop-typing-message', (data: TypingMessage) => {
+      socket.broadcast.emit(`${data.roomId}-typing`, {
+        isTyping: false,
+        ...data
+      })
     })
   })
 }

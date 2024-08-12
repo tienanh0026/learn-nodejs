@@ -11,7 +11,7 @@ const socketMiddleware = (socket: Socket, next: (err?: ExtendedError) => void) =
     if (process.env.JWT_SOCKET_SECRET === token) {
       return next()
     }
-  } else throw new Error('Cannot connect to socket')
+  }
 }
 
 export { socketMiddleware }

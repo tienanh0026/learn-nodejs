@@ -6,12 +6,11 @@ import './database/associations'
 import http from 'http'
 import { socketMiddleware } from './libs/socket/middleware'
 import cors from 'cors'
-import { getIo, initSocket, initWebsocket } from './libs/socket'
+import { getIo, initSocket } from './libs/socket'
 import path from 'path'
 import './libs/discord-bot'
 import dotenv from 'dotenv'
 import './jobs'
-import fs from 'fs'
 
 dotenv.config()
 
@@ -22,7 +21,7 @@ const server = http.createServer(app)
 
 initSocket(server)
 
-initWebsocket(server)
+// initWebsocket(server)
 
 const io = getIo()
 io.use(socketMiddleware)
@@ -47,21 +46,21 @@ app.get('/', (req, res) => {
   res.send('Welcome to the static file server')
 })
 
-app.get('/livestream', (req, res) => {
-  const filePath = path.join(__dirname, 'output.webm')
-  fs.stat(filePath, (err, stats) => {
-    if (err) {
-      res.status(404).send('File not found')
-      return
-    }
-    res.writeHead(200, {
-      'Content-Type': 'video/webm',
-      'Content-Length': stats.size
-    })
-    const readStream = fs.createReadStream(filePath)
-    readStream.pipe(res)
-  })
-})
+// app.get('/livestream', (req, res) => {
+//   const filePath = path.join(__dirname, 'output.webm')
+//   fs.stat(filePath, (err, stats) => {
+//     if (err) {
+//       res.status(404).send('File not found')
+//       return
+//     }
+//     res.writeHead(200, {
+//       'Content-Type': 'video/webm',
+//       'Content-Length': stats.size
+//     })
+//     const readStream = fs.createReadStream(filePath)
+//     readStream.pipe(res)
+//   })
+// })
 app.use(route)
 app.use(errorHandler)
 
