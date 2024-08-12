@@ -50,7 +50,7 @@ export class RoomRepositoryService implements RoomRepository {
   }
   async update(param: RoomUpdateEntity): Promise<RoomDetailEntity | null> {
     await RoomModel.update(
-      { image: param.image, name: param.name, updatedAt: param.updatedAt },
+      { image: param.image, name: param.name, updatedAt: param.updatedAt, latestMessageId: param.latestMessageId },
       {
         where: { id: param.id }
       }

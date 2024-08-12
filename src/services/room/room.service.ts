@@ -75,4 +75,13 @@ export class RoomService {
     const roomIdArr = roomUser.map((roomUser) => roomUser.roomId)
     return await this._roomRepository.findAllAvailableRoom(roomIdArr)
   }
+  async updateRoomLatestMessage({ id, latestMessageId }: { id: string; latestMessageId: string }) {
+    const updatedRoom = await this._roomRepository.update({
+      id,
+      latestMessageId
+    })
+    const io = getIo()
+    io.emit('room-list', updatedRoom)
+    return
+  }
 }

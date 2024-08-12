@@ -9,11 +9,13 @@ import { GetMessageListResponse } from '@/modules/dto/message/message.response'
 import { getIo } from '@/libs/socket'
 import { MessageDetail } from '@/domain/entity/message.entity'
 import { DiscordNotificationBotService } from '@/services/discord-notification-bot/discord-notification-bot.service'
+import { RoomService } from '@/services/room/room.service'
 
 export class MessageController {
   constructor(
     private _messageService: MessageServiceClass,
-    private _discordService: DiscordNotificationBotService
+    private _discordService: DiscordNotificationBotService,
+    private _roomService: RoomService
   ) {}
   sendMessage: RequestHandler<ParamsDictionary, ResponseBody<MessageDetail>, CreateMessageRequest> = async (
     req,
@@ -23,11 +25,20 @@ export class MessageController {
     try {
       const message = await this._messageService.createMessage(req)
       const response = formatResponse(message)
-      res.json(response)
+
+      // Emit Socket.IO event
       const io = getIo()
       io.emit(`${message.roomId}-message`, message)
-      sendPushNotification(message.id, message.ownerId)
-      this._discordService.sendMessage(message)
+
+      // Send HTTP response
+      res.json(response)
+
+      // Perform additional operations asynchronously
+      await Promise.all([
+        this._roomService.updateRoomLatestMessage({ id: message.roomId, latestMessageId: message.id }),
+        sendPushNotification(message.id, message.ownerId),
+        this._discordService.sendMessage(message)
+      ])
     } catch (error) {
       next(error)
     }

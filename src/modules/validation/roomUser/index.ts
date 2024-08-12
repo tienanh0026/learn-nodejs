@@ -7,4 +7,6 @@ const addRoomUserValidator = [
 
 const removeRoomUserValidator = [body('id').notEmpty().withMessage('User Id is required')]
 
-export { addRoomUserValidator, removeRoomUserValidator }
+const readMessageValidator = [body('messageId').notEmpty().withMessage('Message Id is required')]
+
+export { addRoomUserValidator, removeRoomUserValidator, readMessageValidator }

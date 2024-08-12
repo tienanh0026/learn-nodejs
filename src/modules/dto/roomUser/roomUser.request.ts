@@ -15,4 +15,8 @@ type AddUserRequestParams = {
   roomId: string
 }
 
-export type { AddUserRequestBody, AddUserRequestParams, RemoveUserRequestBody }
+type ReadMessageRequestBody = {
+  messageId: string
+}
+
+export type { AddUserRequestBody, AddUserRequestParams, RemoveUserRequestBody, ReadMessageRequestBody }

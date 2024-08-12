@@ -7,8 +7,10 @@ export type RoomUserEntity = {
   role: RoomUserRole
   createdAt: string
   updatedAt: string
+  readAt: string | null
+  lastReadMessageId: string | null
 }
 
-export type RoomUserCreateParams = Omit<RoomUserEntity, 'createdAt' | 'updatedAt'> & {
+export type RoomUserCreateParams = Omit<RoomUserEntity, 'createdAt' | 'updatedAt' | 'readAt' | 'lastReadMessageId'> & {
   role?: RoomUserRole
 }

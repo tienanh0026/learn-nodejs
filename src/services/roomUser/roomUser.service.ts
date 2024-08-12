@@ -4,6 +4,7 @@ import { JwtService } from '@/libs/jwt/jwt.service'
 import {
   AddUserRequestBody,
   AddUserRequestParams,
+  ReadMessageRequestBody,
   RemoveUserRequestBody
 } from '@/modules/dto/roomUser/roomUser.request'
 import { RoomUserRepositoryService } from '@/sevices-repository/roomUser.repository.service'
@@ -60,5 +61,14 @@ export class RoomUserServiceClass {
         throw error
       } else throw new BaseError('Cannot remove user', HttpStatusCode.FORBIDDEN)
     }
+  }
+  async readMessage(req: Request<AddUserRequestParams, ResponseBody<null>, ReadMessageRequestBody>) {
+    const roomId = req.params.roomId
+    const user = await this._jwtService.getUserInfo(req)
+    return await this._roomUserRepository.readMessage({
+      userId: user.id,
+      roomId,
+      messageId: req.body.messageId
+    })
   }
 }

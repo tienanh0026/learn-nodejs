@@ -9,6 +9,8 @@ export class RoomUser extends Model<RoomUserEntity, RoomUserCreateParams> implem
   public role!: RoomUserRole
   public createdAt!: string
   public updatedAt!: string
+  public readAt!: string
+  public lastReadMessageId!: string
 }
 
 export const RoomUserModel = sequelizeConnection.define<RoomUser>(
@@ -54,6 +56,16 @@ export const RoomUserModel = sequelizeConnection.define<RoomUser>(
       field: 'updated_at',
       type: 'timestamp',
       allowNull: false
+    },
+    readAt: {
+      field: 'read_at',
+      type: 'timestamp',
+      allowNull: true
+    },
+    lastReadMessageId: {
+      field: 'last_read_message_id',
+      type: DataType.STRING,
+      allowNull: true
     }
   },
   {

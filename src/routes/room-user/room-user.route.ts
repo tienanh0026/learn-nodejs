@@ -6,7 +6,7 @@ import { JwtService } from '@/libs/jwt/jwt.service'
 import { RoomUserRepositoryService } from '@/sevices-repository/roomUser.repository.service'
 import { UserRepositoryService } from '@/sevices-repository/user.repository.service'
 import { validate } from '@/modules/validation'
-import { addRoomUserValidator, removeRoomUserValidator } from '@/modules/validation/roomUser'
+import { addRoomUserValidator, readMessageValidator, removeRoomUserValidator } from '@/modules/validation/roomUser'
 
 const roomUserRoute = express()
 
@@ -19,5 +19,6 @@ roomUserRoute
   .use('/', jwtAuthGuard.checkToken)
   .post('/:roomId/user/add', validate(addRoomUserValidator), roomUserController.addUser)
   .post('/:roomId/user/remove', validate(removeRoomUserValidator), roomUserController.removerUser)
+  .post('/:roomId/read', validate(readMessageValidator), roomUserController.readMessage)
 
 export default roomUserRoute

@@ -1,6 +1,7 @@
 import { RoomUserModel } from '@/database/models/room-user/room-user.model'
 import { RoomUserCreateParams, RoomUserEntity } from '@/domain/entity/roomUser.entity'
 import { RoomUserRepository } from '@/repository/roomUser.repository'
+import { Sequelize } from 'sequelize'
 
 export class RoomUserRepositoryService implements RoomUserRepository {
   create(data: RoomUserCreateParams): Promise<void> {
@@ -24,6 +25,24 @@ export class RoomUserRepositoryService implements RoomUserRepository {
         userId,
         roomId
       }
+    })
+  }
+  async readMessage({ userId, roomId, messageId }: { userId: string; roomId: string; messageId: string }) {
+    await RoomUserModel.update(
+      {
+        readAt: Sequelize.fn('NOW'),
+        lastReadMessageId: messageId
+      },
+      {
+        where: {
+          roomId,
+          userId
+        }
+      }
+    )
+    return this.findOne({
+      userId,
+      roomId
     })
   }
 }

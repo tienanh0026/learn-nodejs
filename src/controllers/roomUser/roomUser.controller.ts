@@ -1,12 +1,14 @@
 import {
   AddUserRequestBody,
   AddUserRequestParams,
+  ReadMessageRequestBody,
   RemoveUserRequestBody
 } from '@/modules/dto/roomUser/roomUser.request'
 import { RoomUserServiceClass } from '@/services/roomUser/roomUser.service'
 import { RequestHandler } from 'express'
 import { ResponseBody } from '../types'
 import { formatResponse } from '@/common/response/response'
+import { getIo } from '@/libs/socket'
 
 export class RoomUserController {
   constructor(private _roomUserService: RoomUserServiceClass) {}
@@ -26,6 +28,20 @@ export class RoomUserController {
     try {
       await this._roomUserService.removeUser(req)
       res.json(formatResponse(null, 'Remove user success'))
+    } catch (error) {
+      next(error)
+    }
+  }
+  readMessage: RequestHandler<AddUserRequestParams, ResponseBody<null>, ReadMessageRequestBody> = async (
+    req,
+    res,
+    next
+  ) => {
+    try {
+      const newRoomUser = await this._roomUserService.readMessage(req)
+      const io = getIo()
+      io.emit(`${req.params.roomId}-room-user`, newRoomUser)
+      res.json(formatResponse(null, 'Read message'))
     } catch (error) {
       next(error)
     }

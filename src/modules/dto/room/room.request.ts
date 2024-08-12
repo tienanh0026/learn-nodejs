@@ -6,7 +6,7 @@ type RoomCreateReq = {
   type?: RoomType
 }
 type RoomEditReq = {
-  name: string
+  name?: string
   image?: string
   type?: RoomType
 }

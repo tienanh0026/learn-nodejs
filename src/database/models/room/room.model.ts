@@ -12,6 +12,7 @@ export class Room extends Model<RoomEntity, RoomCreateParams> implements RoomEnt
   public createdAt!: string
   public updatedAt!: string
   public deletedAt!: string
+  public latestMessageId!: string | undefined
 }
 
 export const RoomModel = sequelizeConnection.define<Room>(
@@ -63,8 +64,18 @@ export const RoomModel = sequelizeConnection.define<Room>(
       field: 'deleted_at',
       allowNull: true,
       type: 'timestamp'
+    },
+    latestMessageId: {
+      field: 'latest_message_id',
+      type: DataType.UUID,
+      allowNull: true,
+      references: {
+        model: 'message',
+        key: 'id'
+      }
     }
   },
+
   {
     tableName: 'room',
     paranoid: true

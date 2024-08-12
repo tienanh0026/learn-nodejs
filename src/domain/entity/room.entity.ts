@@ -11,6 +11,7 @@ export type RoomEntity = {
   createdAt: string
   updatedAt: string
   deletedAt: string
+  latestMessageId?: string
 }
 
 export type RoomDetailEntity = RoomEntity & {

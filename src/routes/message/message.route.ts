@@ -12,19 +12,27 @@ import { DiscordNotificationBotRepositoryService } from '@/sevices-repository/di
 import { RoomUserRepositoryService } from '@/sevices-repository/roomUser.repository.service'
 import { createMessageValidator, getMessageListValidator } from '@/modules/validation/message'
 import { validate } from '@/modules/validation'
+import { RoomService } from '@/services/room/room.service'
 
 const messageRoute = Router()
 
 const jwtService = new JwtService(new UserRepositoryService())
+const roomRepositoryService = new RoomRepositoryService()
+const roomUserRepositoryService = new RoomUserRepositoryService()
+const messageRepositoryService = new MessageRepositoryService()
+
 const messageService = new MessageService(
-  new MessageRepositoryService(),
+  messageRepositoryService,
   jwtService,
-  new RoomRepositoryService(),
-  new RoomUserRepositoryService()
+  roomRepositoryService,
+  roomUserRepositoryService
 )
+
+const roomService = new RoomService(roomRepositoryService, jwtService, roomUserRepositoryService)
+
 const discordNotificationBotService = new DiscordNotificationBotService(new DiscordNotificationBotRepositoryService())
 const JwtAuthGuard = new JwtAuthGuardClass()
-const MessageController = new MessageControllerClass(messageService, discordNotificationBotService)
+const MessageController = new MessageControllerClass(messageService, discordNotificationBotService, roomService)
 
 messageRoute
   .post(
