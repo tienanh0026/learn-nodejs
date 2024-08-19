@@ -37,6 +37,9 @@ export class RoomUserServiceClass {
       } else throw new BaseError("Don't have permisstion", HttpStatusCode.FORBIDDEN)
     }
   }
+  async getUserList(roomId: string) {
+    return await this._roomUserRepository.getListByRoomId(roomId)
+  }
   async create(req: Request<AddUserRequestParams, ResponseBody<null>, AddUserRequestBody>) {
     const { roomId } = await this.checkRole(req)
     for (const user of req.body.user) {

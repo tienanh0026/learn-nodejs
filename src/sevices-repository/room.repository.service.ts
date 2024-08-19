@@ -1,8 +1,10 @@
 import { RoomModel } from '@/database/models/room/room.model'
 import { UserModel } from '@/database/models/user/user.model'
 import { RoomCreateParams, RoomDetailEntity, RoomEntity, RoomUpdateEntity } from '@/domain/entity/room.entity'
+import BaseError from '@/libs/error/error.model'
 import { RoomRepository } from '@/repository/room.repository'
 import { Op, Sequelize } from 'sequelize'
+import HttpStatusCode from 'http-status-codes'
 
 export class RoomRepositoryService implements RoomRepository {
   create(room: RoomCreateParams): Promise<RoomEntity> {
@@ -42,7 +44,7 @@ export class RoomRepositoryService implements RoomRepository {
       where: { id },
       include: { model: UserModel, as: 'owner', attributes: ['id', 'email', 'name'] }
     })
-    if (!room) throw new Error()
+    if (!room) throw new BaseError('Room not found', HttpStatusCode.BAD_REQUEST)
     else {
       const roomDetail = room.get({ plain: true }) as RoomDetailEntity
       return roomDetail

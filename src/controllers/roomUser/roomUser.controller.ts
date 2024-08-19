@@ -12,6 +12,14 @@ import { getIo } from '@/libs/socket'
 
 export class RoomUserController {
   constructor(private _roomUserService: RoomUserServiceClass) {}
+  getUserList: RequestHandler<AddUserRequestParams> = async (req, res, next) => {
+    try {
+      const userList = await this._roomUserService.getUserList(req.params.roomId)
+      res.json(formatResponse(userList))
+    } catch (error) {
+      next(error)
+    }
+  }
   addUser: RequestHandler<AddUserRequestParams, ResponseBody<null>, AddUserRequestBody> = async (req, res, next) => {
     try {
       await this._roomUserService.create(req)

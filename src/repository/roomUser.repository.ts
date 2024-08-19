@@ -1,6 +1,7 @@
 import { RoomUserCreateParams, RoomUserEntity } from '@/domain/entity/roomUser.entity'
 
 export interface RoomUserRepository {
+  getListByRoomId(roomId: string): Promise<RoomUserEntity[]>
   create(data: RoomUserCreateParams): Promise<void>
   findOne(data: RoomUserEntity): Promise<RoomUserEntity | null>
   findById(data: RoomUserEntity): Promise<RoomUserEntity[]>

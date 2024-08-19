@@ -17,6 +17,7 @@ const roomUserController = new RoomUserController(roomUserServiceClass)
 
 roomUserRoute
   .use('/', jwtAuthGuard.checkToken)
+  .get('/:roomId/user/list', roomUserController.getUserList)
   .post('/:roomId/user/add', validate(addRoomUserValidator), roomUserController.addUser)
   .post('/:roomId/user/remove', validate(removeRoomUserValidator), roomUserController.removerUser)
   .post('/:roomId/read', validate(readMessageValidator), roomUserController.readMessage)

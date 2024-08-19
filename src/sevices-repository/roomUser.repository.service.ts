@@ -4,6 +4,13 @@ import { RoomUserRepository } from '@/repository/roomUser.repository'
 import { Sequelize } from 'sequelize'
 
 export class RoomUserRepositoryService implements RoomUserRepository {
+  async getListByRoomId(roomId: string) {
+    return RoomUserModel.findAll({
+      where: {
+        roomId
+      }
+    })
+  }
   create(data: RoomUserCreateParams): Promise<void> {
     return RoomUserModel.create(data, {
       ignoreDuplicates: true

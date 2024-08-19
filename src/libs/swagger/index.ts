@@ -13,19 +13,23 @@ const options: Options = {
       },
       version: '1.0.0'
     },
-    servers: [
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    },
+    security: [
       {
-        url: 'http://localhost:8080/',
-        description: 'Local server'
-      },
-      {
-        url: '<your live url here>',
-        description: 'Live server'
+        bearerAuth: []
       }
     ]
   },
   // looks for configuration in specified directories
-  apis: ['./router/*/*.ts']
+  apis: ['./src/routes/**/*.swagger.ts']
 }
 const swaggerSpec = swaggerJsdoc(options)
 

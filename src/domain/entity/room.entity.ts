@@ -1,5 +1,11 @@
 import { UserEntity } from './user.entity'
 
+/**
+ * Room type
+ * @param
+ * 1: Public Room
+ * 2: Private Room
+ */
 export type RoomType = '1' | '2'
 
 export type RoomEntity = {
