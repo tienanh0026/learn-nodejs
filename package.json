@@ -7,7 +7,7 @@
     "dev": "npx nodemon",
     "dev-docker": "npm run db:create && npm run db:migrate-up && npx nodemon",
     "build": "rm -rf ./dist && tsc && tsc-alias",
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "NODE_ENV=production PORT=${PORT:-8080}  node dist/index.js --port",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
