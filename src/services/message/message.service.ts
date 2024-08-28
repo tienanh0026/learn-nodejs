@@ -1,10 +1,8 @@
 import { ResponseBody } from '@/controllers/types'
 import { Message } from '@/database/models/message/message.model'
-import { MessageDetail, MessageDetailModel } from '@/domain/entity/message.entity'
+import { MessageCreateParams, MessageDetailModel } from '@/domain/entity/message.entity'
 import BaseError from '@/libs/error/error.model'
-import { JwtService } from '@/libs/jwt/jwt.service'
-import { getFilePathname } from '@/libs/storage'
-import { CreateMessageRequest, GetMessageListRequestQuery } from '@/modules/dto/message/message.request'
+import { GetMessageListRequestQuery } from '@/modules/dto/message/message.request'
 import { GetMessageListResponse } from '@/modules/dto/message/message.response'
 import { MessageRepositoryService } from '@/sevices-repository/message.repository.service'
 import { RoomRepositoryService } from '@/sevices-repository/room.repository.service'
@@ -17,53 +15,31 @@ import { uid } from 'uid'
 export class MessageService {
   constructor(
     private _messageRepositoryService: MessageRepositoryService,
-    private _jwtService: JwtService,
     private _roomRepositoryService: RoomRepositoryService,
     private _roomUserRepositoryService: RoomUserRepositoryService
   ) {}
-  async createMessage(req: Request<ParamsDictionary, ResponseBody<MessageDetail>, CreateMessageRequest>) {
+  async createMessage(params: MessageCreateParams) {
     try {
-      const user = await this._jwtService.getUserInfo(req)
-      if (!user) throw new BaseError('user not found', HttpStatusCode.NOT_FOUND)
-      const roomId = req.params.roomId
+      const roomId = params.roomId
       const room = await this._roomRepositoryService.findOneById(roomId)
       if (!room) throw new BaseError('room not found', HttpStatusCode.NOT_FOUND)
       if (room.type === '2') {
         const roomUser = await this._roomUserRepositoryService.findOne({
           roomId,
-          userId: user.id
+          userId: params.ownerId
         })
         if (!roomUser)
           throw new BaseError("You don't have permission to send message in this room", HttpStatusCode.FORBIDDEN)
       }
-      let filename: string | undefined = undefined
-      if (req.file) filename = getFilePathname(req.file)
       const newMessage = {
-        content: req.body.content,
+        content: params.content,
         id: uid(),
-        ownerId: user.id,
+        ownerId: params.ownerId,
         roomId: room.id,
-        type: req.body.type || '1',
-        media: filename
+        type: params.type || '1',
+        media: params.media
       }
-      const message = await this._messageRepositoryService.create(newMessage)
-      const formatMessage: MessageDetail = {
-        id: message.id,
-        type: message.type,
-        content: message.content,
-        roomId: message.roomId,
-        media: filename,
-        ownerId: message.ownerId,
-        createdAt: message.createdAt,
-        updatedAt: message.updatedAt,
-        deletedAt: message.deletedAt,
-        owner: {
-          email: user.email,
-          id: user.id,
-          name: user.name
-        }
-      }
-      return formatMessage
+      return await this._messageRepositoryService.create(newMessage)
     } catch (error) {
       if (error instanceof BaseError) {
         throw error

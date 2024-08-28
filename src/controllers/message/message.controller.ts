@@ -10,12 +10,16 @@ import { getIo } from '@/libs/socket'
 import { MessageDetail } from '@/domain/entity/message.entity'
 import { DiscordNotificationBotService } from '@/services/discord-notification-bot/discord-notification-bot.service'
 import { RoomService } from '@/services/room/room.service'
+import { JwtService } from '@/libs/jwt/jwt.service'
+import { uid } from 'uid'
+import { getFilePathname } from '@/libs/storage'
 
 export class MessageController {
   constructor(
     private _messageService: MessageServiceClass,
     private _discordService: DiscordNotificationBotService,
-    private _roomService: RoomService
+    private _roomService: RoomService,
+    private _jwtService: JwtService
   ) {}
   sendMessage: RequestHandler<ParamsDictionary, ResponseBody<MessageDetail>, CreateMessageRequest> = async (
     req,
@@ -23,7 +27,20 @@ export class MessageController {
     next
   ) => {
     try {
-      const message = await this._messageService.createMessage(req)
+      const user = await this._jwtService.getUserInfo(req)
+      let media = undefined
+      if (req.file) {
+        const filename = getFilePathname(req.file)
+        media = filename
+      }
+      const message = await this._messageService.createMessage({
+        content: req.body.content,
+        id: uid(),
+        ownerId: user.id,
+        roomId: req.params.roomId,
+        type: req.body.type || '1',
+        media
+      })
       const response = formatResponse(message)
 
       // Emit Socket.IO event

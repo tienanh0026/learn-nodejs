@@ -1,13 +1,20 @@
 import { Message, MessageModel } from '@/database/models/message/message.model'
 import { RoomModel } from '@/database/models/room/room.model'
 import { UserModel } from '@/database/models/user/user.model'
-import { MessageCreateParams, MessageEntity, MessageRoomEntity } from '@/domain/entity/message.entity'
+import { MessageCreateParams, MessageDetail, MessageEntity, MessageRoomEntity } from '@/domain/entity/message.entity'
 import { MessageRepository } from '@/repository/message.repository'
 import { Attributes, FindOptions, WhereOptions } from 'sequelize'
 
 export class MessageRepositoryService implements MessageRepository {
-  create(message: MessageCreateParams): Promise<MessageEntity> {
-    return MessageModel.create(message)
+  async create(message: MessageCreateParams): Promise<MessageDetail> {
+    const newMessage = await MessageModel.create(message, {
+      include: {
+        model: UserModel,
+        as: 'owner',
+        attributes: ['id', 'name', 'email']
+      }
+    })
+    return newMessage.get({ plain: true }) as MessageDetail
   }
   async getOne(messageId: string): Promise<MessageRoomEntity | null> {
     const message = await MessageModel.findOne({
