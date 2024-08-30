@@ -11,10 +11,18 @@ import path from 'path'
 import './libs/discord-bot'
 import dotenv from 'dotenv'
 import './jobs'
-
+import yargs from 'yargs/yargs'
+import { hideBin } from 'yargs/helpers'
 dotenv.config()
 
-const port = process.env.PORT
+const argv = yargs(hideBin(process.argv))
+  .option('port', {
+    type: 'number',
+    description: 'Port to run the server on'
+  })
+  .parseSync()
+
+const port = argv.port || process.env.PORT || 3000
 
 const app = express()
 const server = http.createServer(app)
