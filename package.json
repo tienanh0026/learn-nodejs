@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development PORT=${PORT} nodemon --port",
+    "dev": "PORT=${PORT} nodemon --port",
     "dev-docker": "npm run db:create && npm run db:migrate-up && npx nodemon",
     "build": "rm -rf ./dist && tsc && tsc-alias",
     "start": "NODE_ENV=production PORT=${PORT:-8080}  node dist/index.js --port",
