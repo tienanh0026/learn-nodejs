@@ -2,16 +2,16 @@ import { Sequelize } from 'sequelize'
 import dbConfig from './configs'
 
 const sequelizeConnection: Sequelize = new Sequelize(dbConfig.DB_DATABASE, dbConfig.DB_USERNAME, dbConfig.DB_PASSWORD, {
-  // host: dbConfig.DB_HOST,
+  host: dbConfig.DB_HOST, // Public IP of your Cloud SQL instance
   dialect: 'mysql',
-  port: 3306,
+  port: 3306, // Default MySQL port
   dialectOptions: {
-    socketPath: '/cloudsql/' + dbConfig.DB_CLOUD_SQL_CONNECTION_NAME, // Use the Unix socket path
     ssl: {
       require: true,
-      rejectUnauthorized: false
+      rejectUnauthorized: false // Depending on your SSL configuration
     }
-  }
+  },
+  logging: false
   // host: '/cloudsql/' + dbConfig.DB_CLOUD_SQL_CONNECTION_NAME
 })
 
