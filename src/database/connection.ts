@@ -6,12 +6,13 @@ const sequelizeConnection: Sequelize = new Sequelize(dbConfig.DB_DATABASE, dbCon
   dialect: 'mysql',
   port: 3306,
   dialectOptions: {
+    socketPath: '/cloudsql/' + dbConfig.DB_CLOUD_SQL_CONNECTION_NAME, // Use the Unix socket path
     ssl: {
       require: true,
       rejectUnauthorized: false
     }
-  },
-  host: '/cloudsql/' + dbConfig.DB_CLOUD_SQL_CONNECTION_NAME
+  }
+  // host: '/cloudsql/' + dbConfig.DB_CLOUD_SQL_CONNECTION_NAME
 })
 
 console.log({
