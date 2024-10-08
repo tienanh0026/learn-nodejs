@@ -11,11 +11,12 @@ const sequelizeConnection: Sequelize = new Sequelize(dbConfig.DB_DATABASE, dbCon
     idle: 10000
   },
   dialectOptions: {
-    socketPath: '/cloudsql/' + dbConfig.DB_CLOUD_SQL_CONNECTION_NAME // Use the Unix socket path
-    // ssl: {
-    //   require: true,
-    //   rejectUnauthorized: false
-    // }
+    socketPath: '/cloudsql/' + dbConfig.DB_CLOUD_SQL_CONNECTION_NAME, // Use the Unix socket path
+    connectTimeout: 60000, // 60 seconds
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
   },
   logging: false
 })
