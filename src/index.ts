@@ -34,9 +34,10 @@ initSocket(server)
 const io = getIo()
 io.use(socketMiddleware)
 const corsOptions = {
-  origin: '*', // Or specify your frontend origin instead of '*'
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Include OPTIONS
-  allowedHeaders: ['Content-Type', 'Authorization'] // Specify allowed headers
+  origin: 'http://localhost:3001', // Set your frontend origin explicitly
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Specify allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+  credentials: true // Enable credentials for cross-origin requests
 }
 
 app.use(cors(corsOptions))
@@ -72,12 +73,27 @@ app.get('/', (req, res) => {
 app.use(route)
 app.use(errorHandler)
 
-sequelizeConnection
-  .authenticate()
-  .then(async () => {
-    server.listen(port, () => {
-      console.log('Server is running on http://localhost:' + port)
+// const createUnixSocketPool = async (config) => {
+//   // Note: Saving credentials in environment variables is convenient, but not
+//   // secure - consider a more secure solution such as
+//   // Cloud Secret Manager (https://cloud.google.com/secret-manager) to help
+//   // keep secrets safe.
+//   return mysql.createPool({
+//     user: process.env.DB_USER, // e.g. 'my-db-user'
+//     password: process.env.DB_PASS, // e.g. 'my-db-password'
+//     database: process.env.DB_NAME, // e.g. 'my-database'
+//     socketPath: process.env.INSTANCE_UNIX_SOCKET, // e.g. '/cloudsql/project:region:instance'
+//     // Specify additional properties here.
+//     ...config
+//   })
+// }
+
+server.listen(port, () => {
+  console.log('Server is running on http://localhost:' + port)
+  sequelizeConnection
+    .authenticate()
+    .then(async () => {
+      console.log('Data Source has been initialized!')
     })
-    console.log('Data Source has been initialized!')
-  })
-  .catch((error) => console.log(error))
+    .catch((error) => console.log(error))
+})
