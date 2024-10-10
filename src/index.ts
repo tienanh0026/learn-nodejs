@@ -1,6 +1,6 @@
 import express from 'express'
 import { errorHandler } from './common/error/error'
-import sequelizeConnection from './database/connection'
+import sequelizeConnection, { createUnixSocketPool } from './database/connection'
 import route from './routes'
 import './database/associations'
 import http from 'http'
@@ -13,6 +13,7 @@ import dotenv from 'dotenv'
 import './jobs'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
+
 dotenv.config()
 
 const argv = yargs(hideBin(process.argv))
@@ -73,23 +74,13 @@ app.get('/', (req, res) => {
 app.use(route)
 app.use(errorHandler)
 
-// const createUnixSocketPool = async (config) => {
-//   // Note: Saving credentials in environment variables is convenient, but not
-//   // secure - consider a more secure solution such as
-//   // Cloud Secret Manager (https://cloud.google.com/secret-manager) to help
-//   // keep secrets safe.
-//   return mysql.createPool({
-//     user: process.env.DB_USER, // e.g. 'my-db-user'
-//     password: process.env.DB_PASS, // e.g. 'my-db-password'
-//     database: process.env.DB_NAME, // e.g. 'my-database'
-//     socketPath: process.env.INSTANCE_UNIX_SOCKET, // e.g. '/cloudsql/project:region:instance'
-//     // Specify additional properties here.
-//     ...config
-//   })
-// }
-
 server.listen(port, () => {
   console.log('Server is running on http://localhost:' + port)
+  createUnixSocketPool({})
+    .then(async () => {
+      console.log('Data Source has been initialized!')
+    })
+    .catch((error) => console.log(error))
   sequelizeConnection
     .authenticate()
     .then(async () => {
