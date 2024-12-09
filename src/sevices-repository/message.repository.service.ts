@@ -14,7 +14,14 @@ export class MessageRepositoryService implements MessageRepository {
         attributes: ['id', 'name', 'email']
       }
     })
-    return newMessage.get({ plain: true }) as MessageDetail
+    const populatedMessage = (await MessageModel.findByPk(newMessage.id, {
+      include: {
+        model: UserModel,
+        as: 'owner',
+        attributes: ['id', 'name', 'email']
+      }
+    })) as Message
+    return populatedMessage.get({ plain: true }) as MessageDetail
   }
   async getOne(messageId: string): Promise<MessageRoomEntity | null> {
     const message = await MessageModel.findOne({

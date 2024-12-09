@@ -1,10 +1,12 @@
 import { ResponseBody } from '@/controllers/types'
 import BaseError from '@/libs/error/error.model'
+import { logger } from '@/libs/logger'
 import { NextFunction, Request, Response } from 'express'
 import * as fs from 'fs'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorHandler = (error: Error, req: Request, res: Response, _next: NextFunction) => {
   console.log(error)
+  logger.error(error)
   reqFileErrorHandler(req)
   if (error instanceof BaseError) {
     res.statusCode = error.httpCode

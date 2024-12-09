@@ -61,7 +61,7 @@ export class AuthService {
       token: token,
       userId: newUser.id
     })
-    await this._mailService.sendRegisterSuccessfull(newUser.email, newUser)
+    await this._mailService.sendRegisterSuccessful(newUser.email, newUser)
     return {
       accessToken: token,
       user: newUser

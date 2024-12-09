@@ -4,6 +4,8 @@ import WebSocket from 'ws'
 import fs from 'fs'
 import path from 'path'
 import { User } from '@/database/models/user/user.model'
+import { socketMiddleware } from './middleware'
+import http from 'http'
 
 let io: SocketIOServer
 
@@ -79,4 +81,11 @@ export const getIo = (): SocketIOServer => {
     throw new Error('Socket.io not initialized!')
   }
   return io
+}
+
+// Setup socket IO middleware and initialization
+export function setupSocket(server: http.Server) {
+  initSocket(server)
+  const io = getIo()
+  io.use(socketMiddleware)
 }

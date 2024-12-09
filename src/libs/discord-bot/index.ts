@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits } from 'discord.js'
 import { DiscordService } from '@/services/discord-notification-bot/discord-notification-bot.service'
 import dotenv from 'dotenv'
 import registerCommand from './slash-command'
+import { logger } from '../logger'
 dotenv.config()
 
 // Get the token from the .env file
@@ -25,37 +26,43 @@ discordClient.on('ready', (cli) => {
 discordClient.on('guildCreate', (guild) => {
   registerCommand(process.env.DISCORD_BOT_ID || '', guild.id)
 })
+if (token) discordClient.login(token)
 
-discordClient.login(token)
+export async function initDiscordClient() {
+  try {
+    await discordClient.login(token)
+    discordClient.on('interactionCreate', async (interaction) => {
+      if (!interaction.isChatInputCommand()) return
+      console.log(interaction)
 
-discordClient.on('interactionCreate', async (interaction) => {
-  if (!interaction.isChatInputCommand()) return
-  console.log(interaction)
-
-  if (interaction.commandName === 'register_push_noti' && interaction.guildId) {
-    const isCreated = await DiscordService.createSubscription({
-      channelId: interaction.channelId,
-      guildId: interaction.guildId
+      if (interaction.commandName === 'register_push_noti' && interaction.guildId) {
+        const isCreated = await DiscordService.createSubscription({
+          channelId: interaction.channelId,
+          guildId: interaction.guildId
+        })
+        if (!isCreated) interaction.reply('You have already registered to this channel')
+        else interaction.reply('Chat logs register successfully')
+      }
+      if (interaction.commandName === 'unregister_push_noti' && interaction.guildId) {
+        const isCreated = await DiscordService.deleteSubscription({
+          channelId: interaction.channelId,
+          guildId: interaction.guildId
+        })
+        if (!isCreated) interaction.reply("You haven't registered to this channel")
+        else interaction.reply('Chat logs unregister successfully')
+      }
     })
-    if (!isCreated) interaction.reply('You have already registered to this channel')
-    else interaction.reply('Chat logs register successfully')
-  }
-  if (interaction.commandName === 'unregister_push_noti' && interaction.guildId) {
-    const isCreated = await DiscordService.deleteSubscription({
-      channelId: interaction.channelId,
-      guildId: interaction.guildId
+
+    discordClient.on('guildDelete', (guild) => {
+      DiscordService.deleteServerSubscription(guild.id)
     })
-    if (!isCreated) interaction.reply("You haven't registered to this channel")
-    else interaction.reply('Chat logs unregister successfully')
+
+    discordClient.on('channelDelete', (channel) => {
+      DiscordService.deleteChannelSubscription(channel.id)
+    })
+  } catch (error) {
+    logger.error(error)
   }
-})
-
-discordClient.on('guildDelete', (guild) => {
-  DiscordService.deleteServerSubscription(guild.id)
-})
-
-discordClient.on('channelDelete', (channel) => {
-  DiscordService.deleteChannelSubscription(channel.id)
-})
+}
 
 export default discordClient

@@ -8,7 +8,7 @@ const _messageRepositoryService = new MessageRepositoryService()
 
 const publicKey = process.env.WEB_PUSH_PUBLIC || ''
 const privateKey = process.env.WEB_PUSH_PRIVATE || ''
-webpush.setVapidDetails('mailto:tienahn0026@gmail.com', publicKey, privateKey)
+webpush.setVapidDetails('mailto:tienanh0026@gmail.com', publicKey, privateKey)
 
 const sendPushNotification = async (messageId: string, ownerId: string) => {
   try {

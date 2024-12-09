@@ -42,7 +42,6 @@ export class MessageController {
         media
       })
       const response = formatResponse(message)
-
       // Emit Socket.IO event
       const io = getIo()
       io.emit(`${message.roomId}-message`, message)

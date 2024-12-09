@@ -2,7 +2,7 @@
   "name": "nodejs-practice",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "PORT=${PORT} nodemon --port",
     "dev-docker": "npm run db:create && npm run db:migrate-up && npx nodemon",
@@ -69,6 +69,7 @@
     "swagger-ui-express": "^5.0.1",
     "uid": "^2.0.2",
     "web-push": "^3.6.7",
+    "winston": "^3.17.0",
     "yargs": "^17.7.2"
   }
 }
