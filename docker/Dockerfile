@@ -3,4 +3,4 @@ WORKDIR /nodejs
 
 CMD ["sh", "-c", "npm run dev"]
 
-EXPOSE ${PORT}
+EXPOSE ${SERVER_PORT}

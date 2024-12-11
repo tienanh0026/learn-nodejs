@@ -1,7 +1,7 @@
 import winston from 'winston'
 import path from 'path'
 
-const logDirectory = path.join(__dirname, '..', 'logs') // Relative path to 'logs' folder
+const logDirectory = path.join(__dirname, '..', '..', '..', 'logs') // Relative path to 'logs' folder
 
 // Ensure the 'logs' directory exists
 import fs from 'fs'

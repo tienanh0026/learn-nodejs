@@ -6,9 +6,6 @@ function compareTimeWithoutSeconds(targetDateString: string): 'now' | 'past' | '
   // Strip seconds and milliseconds from both dates
   targetDate.setSeconds(0, 0)
   now.setSeconds(0, 0)
-  console.log(now.toISOString())
-  console.log(targetDate.toISOString())
-
   if (targetDate.getTime() === now.getTime()) {
     return 'now'
   } else if (targetDate.getTime() > now.getTime()) {

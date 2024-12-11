@@ -65,7 +65,6 @@ export default class ScheduleMessageController {
   async sendScheduleMessage() {
     const scheduleMessageArr = await this._scheduleMessageService.getAllScheduleMessage()
     for (const messageItem of scheduleMessageArr) {
-      console.log(compareTimeWithoutSeconds(messageItem.scheduleAt))
       if (compareTimeWithoutSeconds(messageItem.scheduleAt) === 'now') {
         const message = await this._scheduleMessageService.getOneByMessageId(messageItem.messageId)
         if (!message) continue

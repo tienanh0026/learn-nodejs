@@ -1,19 +1,19 @@
 services:
-  nodejs: 
+  nodejs:
     container_name: nodejs-practice-dev
     build:
       dockerfile: docker/Dockerfile
       context: .
     environment:
-      DB_HOST: host.docker.internal  # Use 'host.docker.internal' to connect to the host machine
+      DB_HOST: host.docker.internal # Use 'host.docker.internal' to connect to the host machine
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-    volumes: 
+    volumes:
       - ./:/nodejs/
     ports:
-      - ${PORT}:3002
-  # mysql: 
+      - ${SERVER_PORT}:${SERVER_PORT}
+  # mysql:
   #   image: mysql:8.0
   #   volumes:
   #     - db_mysql:/var/lib/mysql
@@ -22,7 +22,6 @@ services:
   #     MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
   #     MYSQL_DATABASE: ${DB_NAME}
   #     MYSQL_PASSWORD: ${DB_PASSWORD}
-
 # volumes:
-  # db_mysql: 
+# db_mysql:
 
