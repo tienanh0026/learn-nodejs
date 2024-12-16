@@ -3,6 +3,11 @@ type ResponseBody<T> = {
   data: T
 }
 
+type ResponseErrorBody<T> = {
+  message: string
+  errors: T
+}
+
 type ResponsePaginationData<T> = {
   list: T
   perPage: number
@@ -11,4 +16,4 @@ type ResponsePaginationData<T> = {
   totalPages: number
 }
 
-export { ResponseBody, ResponsePaginationData }
+export { ResponseBody, ResponsePaginationData, ResponseErrorBody }

@@ -1,4 +1,4 @@
-import { ResponseBody } from '@/controllers/types'
+import { ResponseBody, ResponseErrorBody } from '@/controllers/types'
 
 function formatResponse<T>(data: T, message?: string) {
   const response: ResponseBody<T> = {
@@ -8,4 +8,12 @@ function formatResponse<T>(data: T, message?: string) {
   return response
 }
 
-export { formatResponse }
+function formatErrorReponse<T>(data: T, message?: string) {
+  const response: ResponseErrorBody<T> = {
+    message: message || 'success',
+    errors: data
+  }
+  return response
+}
+
+export { formatResponse, formatErrorReponse }
