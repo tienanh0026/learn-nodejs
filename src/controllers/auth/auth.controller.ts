@@ -1,5 +1,13 @@
 import { LoginRequest, RefreshRequest, RegisterRequest } from '@/modules/dto/auth/auth.request'
-import { CurrentAuthResponse, LoginResponse, RefreshResponse, RegisterResponse } from '@/modules/dto/auth/auth.response'
+import {
+  CurrentAuthResponse,
+  ForgetPasswordRequest,
+  LoginResponse,
+  RefreshResponse,
+  RegisterResponse,
+  VerifyOtpRequest,
+  VerifyOtpResponse
+} from '@/modules/dto/auth/auth.response'
 import { RequestHandler } from 'express'
 import { ResponseBody } from '../types'
 import { AuthService } from '@/services/auth/auth.service'
@@ -48,6 +56,37 @@ export class AuthController {
       const { refreshToken } = req.body
       const refreshReponse = await this._authService.refresh(refreshToken)
       const response = formatResponse(refreshReponse)
+      res.json(response)
+    } catch (error) {
+      next(error)
+    }
+  }
+  forgetPassword: RequestHandler<unknown, ResponseBody<null>, ForgetPasswordRequest> = async (req, res, next) => {
+    try {
+      const { email } = req.body
+      await this._authService.forgotPassword(email)
+      const response = formatResponse(null)
+      res.json(response)
+    } catch (error) {
+      next(error)
+    }
+  }
+  verifyOtp: RequestHandler<unknown, ResponseBody<VerifyOtpResponse>, VerifyOtpRequest> = async (req, res, next) => {
+    try {
+      const { email, otp } = req.body
+      const { accessToken } = await this._authService.verifyOtp(email, otp)
+      const response = formatResponse({ accessToken })
+      res.json(response)
+    } catch (error) {
+      next(error)
+    }
+  }
+  changePassword: RequestHandler<unknown, ResponseBody<null>, { password: string }> = async (req, res, next) => {
+    try {
+      const token = (req as CustomRequest).token
+      const { password } = req.body
+      await this._authService.changePassword(password, token.id)
+      const response = formatResponse(null, 'Change Password success')
       res.json(response)
     } catch (error) {
       next(error)

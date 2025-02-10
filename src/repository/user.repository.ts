@@ -9,4 +9,5 @@ export interface UserRepository {
   findOneByEmail(email: string): Promise<User | null>
   findOneById(id: string): Promise<UserEntityDefault | null>
   update(userId: string, params: UserEditReq): Promise<User | null>
+  findOneByIdWithPassword(email: string): Promise<User | null>
 }

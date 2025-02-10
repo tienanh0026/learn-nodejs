@@ -16,4 +16,25 @@ type RefreshResponse = {
   accessToken: string
 }
 
-export type { LoginResponse, CurrentAuthResponse, RegisterResponse, RefreshResponse }
+type ForgetPasswordRequest = {
+  email: string
+}
+
+type VerifyOtpRequest = {
+  email: string
+  otp: string
+}
+
+type VerifyOtpResponse = {
+  accessToken: string
+}
+
+export type {
+  LoginResponse,
+  CurrentAuthResponse,
+  RegisterResponse,
+  RefreshResponse,
+  ForgetPasswordRequest,
+  VerifyOtpRequest,
+  VerifyOtpResponse
+}

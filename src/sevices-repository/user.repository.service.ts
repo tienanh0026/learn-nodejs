@@ -25,6 +25,11 @@ export class UserRepositoryService implements UserRepository {
       where: { id: id }
     })
   }
+  async findOneByIdWithPassword(id: string) {
+    return await UserModel.scope('withPassword').findOne({
+      where: { id: id }
+    })
+  }
   async update(userId: string, params: UserEditReq) {
     await UserModel.update(params, {
       where: {

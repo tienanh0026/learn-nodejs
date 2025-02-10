@@ -31,8 +31,17 @@ export class JwtService {
     const token = getToken(req)
     return this.verifyAccessToken(token)
   }
+  getCurrentUserPayload(token: string) {
+    return this.verifyAccessToken(token)
+  }
   async getUserInfo(req: Request) {
     const { id } = this.getUserPayload(req)
+    const user = await this._userRepositoryService.findOneById(id)
+    if (!user) throw new BaseError('Unauthorized', HttpStatusCode.FORBIDDEN)
+    return user
+  }
+  async getCurrentUserInfo(token: string) {
+    const { id } = this.getCurrentUserPayload(token)
     const user = await this._userRepositoryService.findOneById(id)
     if (!user) throw new BaseError('Unauthorized', HttpStatusCode.FORBIDDEN)
     return user

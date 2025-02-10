@@ -5,6 +5,7 @@ import { MessageModel } from './models/message/message.model'
 import { SubscriptionModel } from './models/subscription/subscription.model'
 import { RoomUserModel } from './models/room-user/room-user.model'
 import { ScheduleMessageModel } from './models/schedule-message/schedule-message.model'
+import { OtpModel } from './models/otp/otp.model'
 
 UserModel.hasMany(AuthModel, { foreignKey: 'userId', sourceKey: 'id' })
 AuthModel.belongsTo(UserModel, { foreignKey: 'userId', targetKey: 'id' })
@@ -51,4 +52,9 @@ UserModel.hasOne(ScheduleMessageModel, {
   foreignKey: 'ownerId',
   sourceKey: 'id'
   // as: 'owner'
+})
+
+OtpModel.hasOne(UserModel, {
+  foreignKey: 'id',
+  sourceKey: 'userId'
 })

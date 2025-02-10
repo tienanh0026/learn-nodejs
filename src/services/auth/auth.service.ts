@@ -7,11 +7,14 @@ import { AuthRepositoryService } from '@/sevices-repository/auth.repository.serv
 import { uid } from 'uid'
 import HttpStatusCode from 'http-status-codes'
 import { MailService } from '@/libs/mail/mail.service'
+import { generateOTP } from '@/utilities/otp'
+import { OtpRepositoryService } from '@/sevices-repository/otp.repository.service'
 
 export class AuthService {
   constructor(
     private _userRepository: UserRepositoryService,
     private _authRepository: AuthRepositoryService,
+    private _otpRepository: OtpRepositoryService,
     private _jwtService: JwtService,
     private _mailService: MailService
   ) {}
@@ -90,6 +93,57 @@ export class AuthService {
       console.log(error)
 
       throw new BaseError('Please authenticate', HttpStatusCode.FORBIDDEN)
+    }
+  }
+  async forgotPassword(email: string) {
+    try {
+      const existedUser = await this._userRepository.findOneByEmail(email)
+      if (!existedUser) throw new BaseError('Email not found', HttpStatusCode.CONFLICT)
+      const otp = generateOTP()
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // expires in 10 mintutes
+      await this._otpRepository.createOtp({
+        expiresAt,
+        otp,
+        userId: existedUser.id
+      })
+      await this._mailService.sendResetPasswordOtp(existedUser.email, otp)
+    } catch (error) {
+      if (error) throw error
+      throw new BaseError('Unexpected error', HttpStatusCode.BAD_REQUEST)
+    }
+  }
+  async verifyOtp(email: string, otp: string) {
+    try {
+      const existedUser = await this._userRepository.findOneByEmail(email)
+      if (!existedUser) throw new BaseError('Email not found', HttpStatusCode.CONFLICT)
+      const existedOtp = await this._otpRepository.findOtp(existedUser.id, otp)
+      if (!existedOtp) throw new BaseError('Otp is not correct', HttpStatusCode.CONFLICT)
+      const accessToken = this._jwtService.generateToken({ email: existedUser.email, id: existedUser.id })
+      await this._authRepository.saveToken({ id: uid(), token: accessToken, userId: existedUser.id })
+      await this._otpRepository.delete(existedOtp.id)
+      return { accessToken }
+    } catch (error) {
+      if (error) throw error
+      throw new BaseError('Unexpected error', HttpStatusCode.BAD_REQUEST)
+    }
+  }
+  async changePassword(password: string, userId: string) {
+    try {
+      const existedUser = await this._userRepository.findOneByIdWithPassword(userId)
+      if (!existedUser) throw new BaseError('Email not found', HttpStatusCode.CONFLICT)
+      console.log({ new: password, old: existedUser.password })
+      console.log(bcrypt.compareSync(password, existedUser.password))
+
+      if (bcrypt.compareSync(password, existedUser.password)) {
+        throw new BaseError('Please enter new password', HttpStatusCode.CONFLICT)
+      }
+      await this._userRepository.update(userId, {
+        password: await bcrypt.hash(password, 10)
+      })
+      return
+    } catch (error) {
+      if (error) throw error
+      throw new BaseError('Unexpected error', HttpStatusCode.BAD_REQUEST)
     }
   }
 }
