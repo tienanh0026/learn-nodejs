@@ -20,7 +20,7 @@ export class AuthService {
   ) {}
   async login(user: LoginRequest) {
     try {
-      const existedUser = await this._userRepository.findOneByEmail(user.email)
+      const existedUser = await this._userRepository.findByEmail(user.email, true)
       if (!existedUser) throw new BaseError('Email not found', HttpStatusCode.CONFLICT)
       if (!bcrypt.compareSync(user.password, existedUser.password)) {
         throw new BaseError('sai pass', HttpStatusCode.CONFLICT)
@@ -44,12 +44,12 @@ export class AuthService {
     }
   }
   async currentAuth(email: string) {
-    const extstedUser = await this._userRepository.findByEmail(email)
+    const extstedUser = await this._userRepository.findByEmail(email, false)
     if (!extstedUser) throw new BaseError('User not found', HttpStatusCode.NOT_FOUND)
     return extstedUser
   }
   async register(user: RegisterRequest) {
-    const existedUser = await this._userRepository.findByEmail(user.email)
+    const existedUser = await this._userRepository.findByEmail(user.email, false)
     if (existedUser) throw new BaseError('Existed email', HttpStatusCode.CONFLICT)
     console.log('user', user)
     user.password = await bcrypt.hash(user.password, 10)
@@ -97,7 +97,7 @@ export class AuthService {
   }
   async forgotPassword(email: string) {
     try {
-      const existedUser = await this._userRepository.findOneByEmail(email)
+      const existedUser = await this._userRepository.findByEmail(email, true)
       if (!existedUser) throw new BaseError('Email not found', HttpStatusCode.CONFLICT)
       const otp = generateOTP()
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // expires in 10 mintutes
@@ -114,7 +114,7 @@ export class AuthService {
   }
   async verifyOtp(email: string, otp: string) {
     try {
-      const existedUser = await this._userRepository.findOneByEmail(email)
+      const existedUser = await this._userRepository.findByEmail(email, false)
       if (!existedUser) throw new BaseError('Email not found', HttpStatusCode.CONFLICT)
       const existedOtp = await this._otpRepository.findOtp(existedUser.id, otp)
       if (!existedOtp) throw new BaseError('Otp is not correct', HttpStatusCode.CONFLICT)
@@ -129,11 +129,8 @@ export class AuthService {
   }
   async changePassword(password: string, userId: string) {
     try {
-      const existedUser = await this._userRepository.findOneByIdWithPassword(userId)
+      const existedUser = await this._userRepository.findOneById(userId, true)
       if (!existedUser) throw new BaseError('Email not found', HttpStatusCode.CONFLICT)
-      console.log({ new: password, old: existedUser.password })
-      console.log(bcrypt.compareSync(password, existedUser.password))
-
       if (bcrypt.compareSync(password, existedUser.password)) {
         throw new BaseError('Please enter new password', HttpStatusCode.CONFLICT)
       }

@@ -1,41 +1,35 @@
-import { UserCreateParams } from '@/domain/entity/user.entity'
+import { UserCreateParams, UserWithOptionalPassword, UserEntity, UserEntityDefault } from '@/domain/entity/user.entity'
 import { UserModel } from '@/database/models/user/user.model'
 import { UserRepository } from '@/repository/user.repository'
 import { UserEditReq } from '@/modules/dto/user/user.request'
 
 export class UserRepositoryService implements UserRepository {
-  async create(user: UserCreateParams) {
+  async create(user: UserCreateParams): Promise<UserEntity> {
     return await UserModel.create(user)
   }
-  async findAll() {
+
+  async findAll(): Promise<UserEntityDefault[]> {
     return await UserModel.findAll()
   }
-  async findByEmail(email: string) {
-    return await UserModel.findOne({
+
+  async findByEmail<T extends boolean>(email: string, withPassword: T): Promise<UserWithOptionalPassword<T> | null> {
+    return UserModel.scope(withPassword ? 'withPassword' : undefined).findOne({
       where: { email: email }
     })
   }
-  async findOneByEmail(email: string) {
-    return await UserModel.scope('withPassword').findOne({
-      where: { email: email }
-    })
-  }
-  async findOneById(id: string) {
-    return await UserModel.findOne({
+
+  async findOneById<T extends boolean>(id: string, withPassword: T): Promise<UserWithOptionalPassword<T> | null> {
+    return await UserModel.scope(withPassword ? 'withPassword' : undefined).findOne({
       where: { id: id }
     })
   }
-  async findOneByIdWithPassword(id: string) {
-    return await UserModel.scope('withPassword').findOne({
-      where: { id: id }
-    })
-  }
-  async update(userId: string, params: UserEditReq) {
+
+  async update(userId: string, params: UserEditReq): Promise<UserEntity | null> {
     await UserModel.update(params, {
       where: {
         id: userId
       }
     })
-    return await this.findOneById(userId)
+    return await this.findOneById(userId, true)
   }
 }

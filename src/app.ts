@@ -7,10 +7,13 @@ import './database/associations'
 import './libs/discord-bot'
 import dotenv from 'dotenv'
 import './jobs'
+import helmet from 'helmet'
 
 dotenv.config()
 
 const app = express()
+
+app.use(helmet())
 
 // Setup CORS options
 const corsOptions = {

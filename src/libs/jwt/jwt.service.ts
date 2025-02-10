@@ -36,13 +36,13 @@ export class JwtService {
   }
   async getUserInfo(req: Request) {
     const { id } = this.getUserPayload(req)
-    const user = await this._userRepositoryService.findOneById(id)
+    const user = await this._userRepositoryService.findOneById(id, false)
     if (!user) throw new BaseError('Unauthorized', HttpStatusCode.FORBIDDEN)
     return user
   }
   async getCurrentUserInfo(token: string) {
     const { id } = this.getCurrentUserPayload(token)
-    const user = await this._userRepositoryService.findOneById(id)
+    const user = await this._userRepositoryService.findOneById(id, false)
     if (!user) throw new BaseError('Unauthorized', HttpStatusCode.FORBIDDEN)
     return user
   }

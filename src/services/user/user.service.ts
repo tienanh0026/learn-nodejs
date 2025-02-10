@@ -4,7 +4,6 @@ import HttpStatusCode from 'http-status-codes'
 import bcrypt from 'bcryptjs'
 import { UserRepositoryService } from '@/sevices-repository/user.repository.service'
 import { UserEntityDefault } from '@/domain/entity/user.entity'
-import { User } from '@/database/models/user/user.model'
 import { ResponseBody } from '@/controllers/types'
 import { Request } from 'express'
 import { JwtService } from '@/libs/jwt/jwt.service'
@@ -14,7 +13,7 @@ export class UserService {
     private _userRepository: UserRepositoryService
   ) {}
   async create(user: UserReq): Promise<UserEntityDefault> {
-    const existedUser = await this._userRepository.findByEmail(user.email)
+    const existedUser = await this._userRepository.findByEmail(user.email, false)
     if (existedUser) {
       throw new BaseError('existed', HttpStatusCode.CONFLICT)
     }
@@ -26,11 +25,11 @@ export class UserService {
   async findAll(): Promise<UserEntityDefault[]> {
     return await this._userRepository.findAll()
   }
-  async findByEmail(email: string): Promise<User | null> {
-    return await this._userRepository.findByEmail(email)
+  async findByEmail(email: string): Promise<UserEntityDefault | null> {
+    return await this._userRepository.findByEmail(email, false)
   }
   async findOneById(id: string) {
-    const user = await this._userRepository.findOneById(id)
+    const user = await this._userRepository.findOneById(id, false)
     if (!user) throw new BaseError('Not found', HttpStatusCode.NOT_FOUND)
     return user
   }

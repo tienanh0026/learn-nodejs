@@ -10,3 +10,5 @@ export type UserEntity = {
 export type UserEntityDefault = Omit<UserEntity, 'password'>
 
 export interface UserCreateParams extends Omit<UserEntity, 'id' | 'createdAt' | 'updatedAt'> {}
+
+export type UserWithOptionalPassword<T extends boolean> = T extends true ? UserEntity : UserEntityDefault
